@@ -1,0 +1,4 @@
+aws-lambda
+boto3
+aws-powertools
+urllib3
