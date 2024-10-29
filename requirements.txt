@@ -1,4 +1,3 @@
-aws-lambda
 boto3
 aws-lambda-powertools
 urllib3
