@@ -1,6 +1,4 @@
-import pytest
 from fact_checker import perform_fact_checking_task, classify_result
-from typing import Any
 
 def test_perform_fact_checking_task(text: str) -> None:
     result = perform_fact_checking_task('This is a true statement.')

@@ -1,6 +1,4 @@
 import boto3
-import json
-import urllib3
 
 # Initialize AWS clients
 sqs = boto3.client('sqs')
