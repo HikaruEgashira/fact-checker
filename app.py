@@ -3,6 +3,8 @@ import json
 import urllib3
 import argparse
 import requests
+from typing import Any, Dict
+from aws_lambda_powertools.utilities.typing import LambdaContext, LambdaEvent
 
 # Initialize AWS clients
 sqs = boto3.client('sqs')
@@ -12,7 +14,7 @@ dynamodb = boto3.client('dynamodb')
 QUEUE_URL = 'https://sqs.<region>.amazonaws.com/<account-id>/<queue-name>'
 TABLE_NAME = '<dynamodb-table-name>'
 
-def handle_request(event, context):
+def handle_request(event: LambdaEvent, context: LambdaContext) -> Dict[str, Any]:
     body = json.loads(event['body'])
     text = body['text']
     
@@ -29,7 +31,7 @@ def handle_request(event, context):
         'body': json.dumps({'task_id': task_id})
     }
 
-def check_task_status(event, context):
+def check_task_status(event: LambdaEvent, context: LambdaContext) -> Dict[str, Any]:
     task_id = event['pathParameters']['task_id']
     
     # Retrieve the task result from DynamoDB
@@ -50,7 +52,7 @@ def check_task_status(event, context):
             'body': json.dumps({'error': 'Task not found'})
         }
 
-def lambda_handler(event, context):
+def lambda_handler(event: LambdaEvent, context: LambdaContext) -> Dict[str, Any]:
     if event['httpMethod'] == 'POST' and event['path'] == '/fact-check':
         return handle_request(event, context)
     elif event['httpMethod'] == 'GET' and event['path'].startswith('/fact-check/'):
@@ -61,20 +63,20 @@ def lambda_handler(event, context):
             'body': json.dumps({'error': 'Invalid request'})
         }
 
-def submit_fact_check_request(text):
+def submit_fact_check_request(text: str) -> Dict[str, Any]:
     response = requests.post(
         'https://<api-endpoint>/fact-check',
         json={'text': text}
     )
     return response.json()
 
-def check_fact_check_status(task_id):
+def check_fact_check_status(task_id: str) -> Dict[str, Any]:
     response = requests.get(
         f'https://<api-endpoint>/fact-check/{task_id}'
     )
     return response.json()
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(description='Fact Checker CLI')
     subparsers = parser.add_subparsers(dest='command')
     

@@ -2,3 +2,5 @@ aws-lambda
 boto3
 aws-powertools
 urllib3
+boto3-stubs
+aws-lambda-powertools
