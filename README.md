@@ -34,7 +34,7 @@ This project is an API server for performing fact-checking on given texts. When 
 
 To run the API server locally, use the following command:
 ```sh
-python app.py
+python src/app.py
 ```
 
 ## API Documentation
@@ -74,12 +74,20 @@ python app.py
 
 To submit a fact-checking request via the CLI, use the following command:
 ```sh
-python app.py submit --text "The text to be fact-checked."
+python src/app.py submit --text "The text to be fact-checked."
 ```
 
 ### Check Task Status
 
 To check the status of a fact-checking task via the CLI, use the following command:
 ```sh
-python app.py status --task_id "unique-task-id"
+python src/app.py status --task_id "unique-task-id"
+```
+
+## Log
+
+```sh
+LOG_GROUP_NAME="/aws/lambda/fact_check_handler"
+LOG_STREAM_NAME=$(aws logs describe-log-streams --log-group-name $LOG_GROUP_NAME --query 'logStreams[0].logStreamName' --output text)
+aws logs get-log-events --log-group-name $LOG_GROUP_NAME --log-stream-name $LOG_STREAM_NAME
 ```
