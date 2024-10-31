@@ -169,7 +169,3 @@ resource "aws_api_gateway_deployment" "fact_check_api_deployment" {
   rest_api_id = aws_api_gateway_rest_api.fact_check_api.id
   stage_name  = "prod"
 }
-
-output "api_endpoint" {
-  value = aws_api_gateway_deployment.fact_check_api_deployment.invoke_url
-}
