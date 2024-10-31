@@ -11,7 +11,7 @@ from aws_lambda_powertools.utilities.typing import LambdaContext
 from aws_lambda_powertools import Logger
 
 # Define the DynamoDB table name
-TABLE_NAME = os.environ.get("TABLE_NAME")
+TABLE_NAME = os.environ.get("TABLE_NAME") or "fact-check-results"
 
 # Initialize AWS clients
 dynamodb = boto3.resource("dynamodb")
@@ -70,3 +70,22 @@ def lambda_handler(event, context: LambdaContext):
         processor=processor,
         context=context,
     )
+
+
+if __name__ == "__main__":
+    event = {
+        "Records": [
+            {
+                "messageId": "test-message-id",
+                "receiptHandle": "test-receipt-handle",
+                "body": "The text to be fact-checked.",
+                "attributes": {},
+                "messageAttributes": {},
+                "md5OfBody": "test-md5",
+                "eventSource": "aws:sqs",
+                "eventSourceARN": "arn:aws:sqs:region:account-id:queue-name",
+                "awsRegion": "region",
+            }
+        ]
+    }
+    lambda_handler(event, LambdaContext())
