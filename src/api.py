@@ -10,11 +10,11 @@ from aws_lambda_powertools.utilities.data_classes import (
 
 from schemas.task import Task, session, update_task
 from schemas.message import send_message
-from src.schemas.message import ExecuteMessage
+from schemas.message import ExecuteMessage
 
 
 # Define the SQS queue URL and DynamoDB table name
-TABLE_NAME = os.environ.get("TABLE_NAME") or "fact-check-results"
+TABLE_NAME = os.environ.get("TABLE_NAME") or "fact-checker-results"
 
 # Initialize AWS clients
 sts = session.client("sts")

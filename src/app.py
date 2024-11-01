@@ -1,6 +1,6 @@
 import argparse
 import json
-from src.api import lambda_handler
+from api import lambda_handler
 
 
 def submit_fact_check_request(text: str):
@@ -9,7 +9,7 @@ def submit_fact_check_request(text: str):
         "httpMethod": "POST",
         "body": json.dumps({"text": text}),
     }
-    lambda_handler(event, None)  # type: ignore
+    print(lambda_handler(event, None))  # type: ignore
 
 
 def check_fact_check_status(task_id: str):
@@ -18,7 +18,7 @@ def check_fact_check_status(task_id: str):
         "httpMethod": "GET",
         "pathParameters": {"task_id": task_id},
     }
-    lambda_handler(event, None)  # type: ignore
+    print(lambda_handler(event, None))  # type: ignore
 
 
 def main():

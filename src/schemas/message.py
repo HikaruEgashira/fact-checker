@@ -1,9 +1,9 @@
 import os
 from typing import Literal
 from aws_lambda_powertools.utilities.parser import BaseModel
-from aws import session
+from schemas.aws import session
 
-QUEUE_NAME = os.environ.get("QUEUE_NAME") or "fact-check-queue"
+QUEUE_NAME = os.environ.get("QUEUE_NAME") or "fact-checker-queue"
 REGION = os.environ.get("AWS_REGION") or "ap-northeast-1"
 
 sqs = session.client("sqs")

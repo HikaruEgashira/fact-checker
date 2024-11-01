@@ -1,9 +1,9 @@
 import os
 from typing import Literal, Union
 from aws_lambda_powertools.utilities.parser import BaseModel
-from aws import session
+from schemas.aws import session
 
-TABLE_NAME = os.environ.get("TABLE_NAME") or "fact-check-results"
+TABLE_NAME = os.environ.get("TABLE_NAME") or "fact-checker-results"
 
 dynamodb = session.resource("dynamodb")
 
