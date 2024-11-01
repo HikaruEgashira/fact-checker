@@ -1,6 +1,5 @@
 import argparse
 import json
-import uuid
 from src.api import lambda_handler
 
 
@@ -10,7 +9,7 @@ def submit_fact_check_request(text: str):
         "httpMethod": "POST",
         "body": json.dumps({"text": text}),
     }
-    return lambda_handler(event, None)  # type: ignore
+    lambda_handler(event, None)  # type: ignore
 
 
 def check_fact_check_status(task_id: str):
@@ -19,7 +18,7 @@ def check_fact_check_status(task_id: str):
         "httpMethod": "GET",
         "pathParameters": {"task_id": task_id},
     }
-    return lambda_handler(event, None)  # type: ignore
+    lambda_handler(event, None)  # type: ignore
 
 
 def main():
@@ -33,15 +32,13 @@ def main():
     status_parser.add_argument("--task_id", required=True)
 
     args = parser.parse_args()
-
-    if args.command == "submit":
-        result = submit_fact_check_request(args.text)
-        print(result)
-    elif args.command == "status":
-        result = check_fact_check_status(args.task_id)
-        print(result)
-    else:
-        parser.print_help()
+    match args.command:
+        case "submit":
+            submit_fact_check_request(args.text)
+        case "status":
+            check_fact_check_status(args.task_id)
+        case _:
+            parser.print_help()
 
 
 if __name__ == "__main__":
