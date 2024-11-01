@@ -83,11 +83,3 @@ To check the status of a fact-checking task via the CLI, use the following comma
 ```sh
 python src/app.py status --task_id "unique-task-id"
 ```
-
-## Log
-
-```sh
-LOG_GROUP_NAME="/aws/lambda/fact_check_handler"
-LOG_STREAM_NAME=$(aws logs describe-log-streams --log-group-name $LOG_GROUP_NAME --query 'logStreams[0].logStreamName' --output text)
-aws logs get-log-events --log-group-name $LOG_GROUP_NAME --log-stream-name $LOG_STREAM_NAME
-```
