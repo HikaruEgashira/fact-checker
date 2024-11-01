@@ -10,11 +10,11 @@ terraform {
   }
 }
 
-resource "aws_sqs_queue" "fact_check_queue" {
+resource "aws_sqs_queue" "fact_checker_queue" {
   name = var.queue_name
 }
 
-resource "aws_dynamodb_table" "fact_check_results" {
+resource "aws_dynamodb_table" "fact_checker_results" {
   name         = var.dynamodb_table_name
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "task_id"
@@ -57,7 +57,7 @@ resource "aws_iam_policy" "lambda_policy" {
           "sqs:GetQueueAttributes"
         ]
         Effect   = "Allow"
-        Resource = aws_sqs_queue.fact_check_queue.arn
+        Resource = aws_sqs_queue.fact_checker_queue.arn
       },
       {
         Action = [
@@ -65,7 +65,7 @@ resource "aws_iam_policy" "lambda_policy" {
           "dynamodb:PutItem"
         ]
         Effect   = "Allow"
-        Resource = aws_dynamodb_table.fact_check_results.arn
+        Resource = aws_dynamodb_table.fact_checker_results.arn
       }
     ]
   })
@@ -100,14 +100,14 @@ resource "aws_lambda_function" "fact_checker_api" {
   ]
 
   logging_config {
-    log_group  = "/aws/lambda/fact_check_handler"
+    log_group  = "/fact_checker"
     log_format = "JSON"
   }
 
   environment {
     variables = {
-      QUEUE_NAME = aws_sqs_queue.fact_check_queue.name
-      TABLE_NAME = aws_dynamodb_table.fact_check_results.name
+      QUEUE_NAME = aws_sqs_queue.fact_checker_queue.name
+      TABLE_NAME = aws_dynamodb_table.fact_checker_results.name
     }
   }
 }
@@ -125,79 +125,79 @@ resource "aws_lambda_function" "fact_checker_worker" {
   ]
 
   logging_config {
-    log_group  = "/aws/lambda/fact_check_handler"
+    log_group  = "/fact_checker"
     log_format = "JSON"
   }
 
   environment {
     variables = {
-      QUEUE_NAME = aws_sqs_queue.fact_check_queue.name
-      TABLE_NAME = aws_dynamodb_table.fact_check_results.name
+      QUEUE_NAME = aws_sqs_queue.fact_checker_queue.name
+      TABLE_NAME = aws_dynamodb_table.fact_checker_results.name
     }
   }
 }
 
 resource "aws_lambda_event_source_mapping" "sqs_event_source" {
-  event_source_arn = aws_sqs_queue.fact_check_queue.arn
-  function_name    = aws_lambda_function.fact_check_worker.arn
+  event_source_arn = aws_sqs_queue.fact_checker_queue.arn
+  function_name    = aws_lambda_function.fact_checker_worker.arn
   enabled          = true
   batch_size       = 10
 }
 
-resource "aws_cloudwatch_log_group" "fact_check_handler" {
-  name              = "/aws/lambda/fact_check_handler"
+resource "aws_cloudwatch_log_group" "fact_checker_handler" {
+  name              = "/fact_checker"
   retention_in_days = 30
 }
 
-resource "aws_api_gateway_rest_api" "fact_check_api" {
+resource "aws_api_gateway_rest_api" "fact_checker_api" {
   name        = "FactCheckAPI"
   description = "API for fact-checking texts"
 }
 
-resource "aws_api_gateway_resource" "fact_check_resource" {
-  rest_api_id = aws_api_gateway_rest_api.fact_check_api.id
-  parent_id   = aws_api_gateway_rest_api.fact_check_api.root_resource_id
+resource "aws_api_gateway_resource" "fact_checker_resource" {
+  rest_api_id = aws_api_gateway_rest_api.fact_checker_api.id
+  parent_id   = aws_api_gateway_rest_api.fact_checker_api.root_resource_id
   path_part   = "fact-check"
 }
 
 resource "aws_api_gateway_method" "post_fact_check" {
-  rest_api_id   = aws_api_gateway_rest_api.fact_check_api.id
-  resource_id   = aws_api_gateway_resource.fact_check_resource.id
+  rest_api_id   = aws_api_gateway_rest_api.fact_checker_api.id
+  resource_id   = aws_api_gateway_resource.fact_checker_resource.id
   http_method   = "POST"
   authorization = "NONE"
 }
 
-resource "aws_api_gateway_integration" "post_fact_check_integration" {
-  rest_api_id             = aws_api_gateway_rest_api.fact_check_api.id
-  resource_id             = aws_api_gateway_resource.fact_check_resource.id
+resource "aws_api_gateway_integration" "post_fact_checker_integration" {
+  rest_api_id             = aws_api_gateway_rest_api.fact_checker_api.id
+  resource_id             = aws_api_gateway_resource.fact_checker_resource.id
   http_method             = aws_api_gateway_method.post_fact_check.http_method
   type                    = "AWS_PROXY"
   integration_http_method = "POST"
-  uri                     = aws_lambda_function.fact_check_api.invoke_arn
+  uri                     = aws_lambda_function.fact_checker_api.invoke_arn
 }
 
-resource "aws_api_gateway_method" "get_fact_check_status" {
-  rest_api_id   = aws_api_gateway_rest_api.fact_check_api.id
-  resource_id   = aws_api_gateway_resource.fact_check_resource.id
+resource "aws_api_gateway_method" "get_fact_checker_status" {
+  rest_api_id   = aws_api_gateway_rest_api.fact_checker_api.id
+  resource_id   = aws_api_gateway_resource.fact_checker_resource.id
   http_method   = "GET"
   authorization = "NONE"
 }
 
-resource "aws_api_gateway_integration" "get_fact_check_status_integration" {
-  rest_api_id             = aws_api_gateway_rest_api.fact_check_api.id
-  resource_id             = aws_api_gateway_resource.fact_check_resource.id
-  http_method             = aws_api_gateway_method.get_fact_check_status.http_method
+resource "aws_api_gateway_integration" "get_fact_checker_status_integration" {
+  rest_api_id             = aws_api_gateway_rest_api.fact_checker_api.id
+  resource_id             = aws_api_gateway_resource.fact_checker_resource.id
+  http_method             = aws_api_gateway_method.get_fact_checker_status.http_method
   type                    = "AWS_PROXY"
   integration_http_method = "POST"
-  uri                     = aws_lambda_function.fact_check_api.invoke_arn
+  uri                     = aws_lambda_function.fact_checker_api.invoke_arn
 }
 
-resource "aws_api_gateway_deployment" "fact_check_api_deployment" {
+resource "aws_api_gateway_deployment" "fact_checker_api_deployment" {
   depends_on = [
-    aws_api_gateway_integration.post_fact_check_integration,
-    aws_api_gateway_integration.get_fact_check_status_integration
+    aws_api_gateway_integration.post_fact_checker_integration,
+    aws_api_gateway_integration.get_fact_checker_status_integration
   ]
 
-  rest_api_id = aws_api_gateway_rest_api.fact_check_api.id
+  rest_api_id = aws_api_gateway_rest_api.fact_checker_api.id
   stage_name  = "prod"
 }

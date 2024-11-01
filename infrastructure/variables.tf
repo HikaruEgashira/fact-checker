@@ -7,11 +7,11 @@ variable "aws_region" {
 variable "queue_name" {
   description = "The name of the SQS queue"
   type        = string
-  default     = "fact-check-queue"
+  default     = "fact-checker-queue"
 }
 
 variable "dynamodb_table_name" {
   description = "The name of the DynamoDB table for storing fact-check results"
   type        = string
-  default     = "fact-check-results"
+  default     = "fact-checker-results"
 }
