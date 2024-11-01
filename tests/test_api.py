@@ -1,5 +1,5 @@
 import json
-from src.fetch_handler import (
+from src.api import (
     enqueue_fact_check_task,
     check_task_status,
 )

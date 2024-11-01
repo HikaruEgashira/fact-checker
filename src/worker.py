@@ -1,5 +1,4 @@
-import os
-import boto3
+import json
 from aws_lambda_powertools.utilities.batch import (
     BatchProcessor,
     EventType,
@@ -9,21 +8,17 @@ from aws_lambda_powertools.utilities.data_classes.sqs_event import SQSRecord
 from aws_lambda_powertools.utilities.typing import LambdaContext
 from aws_lambda_powertools import Logger
 
-# Define the DynamoDB table name
-TABLE_NAME = os.environ.get("TABLE_NAME") or "fact-check-results"
+from schemas.message import ExecuteMessage
+from schemas.task import Task, update_task
+from schemas.aws import session
 
 # Initialize AWS clients
-dynamodb = boto3.resource("dynamodb")
-bedrock = boto3.client("bedrock-runtime")
+bedrock = session.client("bedrock-runtime")
 processor = BatchProcessor(event_type=EventType.SQS)
 logger = Logger()
 
 
-def record_handler(record: SQSRecord):
-    if TABLE_NAME is None:
-        raise ValueError("TABLE_NAME environment variable is not set")
-    text = record.body
-
+def execute(message: ExecuteMessage):
     response = bedrock.converse(
         modelId="anthropic.claude-3-haiku-20240307-v1:0",
         messages=[
@@ -46,20 +41,31 @@ def record_handler(record: SQSRecord):
             {"role": "assistant", "content": [{"text": "accurate"}]},
             {
                 "role": "user",
-                "content": [{"text": text}],
+                "content": [{"text": message.text}],
             },
         ],
         inferenceConfig={"maxTokens": 512, "temperature": 0.5, "topP": 0.9},
     )
-    response_text = response["output"]["message"]["content"][0]["text"]  # type: ignore
+    response_text: Status = response["output"]["message"]["content"][0]["text"]  # type: ignore
     if response_text not in ["accurate", "inaccurate", "false", "indeterminate"]:
         raise ValueError(f"Invalid response: {response_text}")
 
     logger.info(f"Received response: {response_text}")
-    table = dynamodb.Table(TABLE_NAME)
-    table.put_item(
-        Item={"task_id": record.message_id, "result": response_text, "text": text}
+    task = Task(
+        task_id=message.task_id,
+        text=message.text,
+        result=response_text,
     )
+    update_task(task)
+
+
+def record_handler(record: SQSRecord):
+    message = json.loads(record.body)
+    match message["type"]:
+        case "execute":
+            execute(ExecuteMessage(**message))
+        case _:
+            raise ValueError(f"Invalid message type: {message['type']}")
 
 
 def lambda_handler(event, context: LambdaContext):

@@ -1,4 +1,4 @@
-from src.queue_handler import record_handler
+from src.worker import record_handler
 from aws_lambda_powertools.utilities.data_classes.sqs_event import SQSRecord
 import pytest
 

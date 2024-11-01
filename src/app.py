@@ -1,19 +1,19 @@
-from typing import Any, Dict
 import argparse
 import json
-from src.fetch_handler import lambda_handler
+import uuid
+from src.api import lambda_handler
 
 
-def submit_fact_check_request(text: str) -> Dict[str, Any]:
-    evevt = {
+def submit_fact_check_request(text: str):
+    event = {
         "path": "/fact-check",
         "httpMethod": "POST",
         "body": json.dumps({"text": text}),
     }
-    return lambda_handler(evevt, None)  # type: ignore
+    return lambda_handler(event, None)  # type: ignore
 
 
-def check_fact_check_status(task_id: str) -> Dict[str, Any]:
+def check_fact_check_status(task_id: str):
     event = {
         "path": f"/fact-check/{task_id}",
         "httpMethod": "GET",
@@ -22,7 +22,7 @@ def check_fact_check_status(task_id: str) -> Dict[str, Any]:
     return lambda_handler(event, None)  # type: ignore
 
 
-def main() -> None:
+def main():
     parser = argparse.ArgumentParser(description="Fact Checker CLI")
     subparsers = parser.add_subparsers(dest="command")
 
@@ -30,7 +30,7 @@ def main() -> None:
     submit_parser.add_argument("--text", required=True)
 
     status_parser = subparsers.add_parser("status")
-    status_parser.add_argument("--task_id", required=True, help="The task ID")
+    status_parser.add_argument("--task_id", required=True)
 
     args = parser.parse_args()
 
