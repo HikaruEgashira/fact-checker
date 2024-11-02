@@ -1,12 +1,10 @@
-import os
+import boto3
 from aws_lambda_powertools import Logger
-from schemas.aws import session
 from schemas.task import Task, update_task, Status
 from src.schemas.message import ExecuteMessage
 
 # Initialize AWS clients
-bedrock = session.client("bedrock-runtime")
-dynamodb = session.resource("dynamodb")
+bedrock = boto3.client("bedrock-runtime")
 logger = Logger()
 
 

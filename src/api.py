@@ -1,25 +1,19 @@
-import os
 import json
 import uuid
-from typing import Any, Dict
+from aws_lambda_powertools import Logger
 from aws_lambda_powertools.utilities.typing import LambdaContext
 from aws_lambda_powertools.utilities.data_classes import (
     APIGatewayProxyEvent,
     event_source,
 )
 
-from schemas.task import Task, session, update_task
+
+from schemas.task import Task, update_task, get_task
 from schemas.message import send_message
+
 from schemas.message import ExecuteMessage
 
-
-# Define the SQS queue URL and DynamoDB table name
-TABLE_NAME = os.environ.get("TABLE_NAME") or "fact-checker-results"
-
-# Initialize AWS clients
-sts = session.client("sts")
-sqs = session.client("sqs")
-dynamodb = session.resource("dynamodb")
+logger = Logger()
 
 
 def enqueue_fact_check_task(event, context: LambdaContext):
@@ -43,19 +37,15 @@ def enqueue_fact_check_task(event, context: LambdaContext):
 
 def check_task_status(event, context: LambdaContext):
     task_id = event["pathParameters"]["task_id"]
-
-    # Retrieve the task result from DynamoDB
-    response = dynamodb.Table(TABLE_NAME).get_item(Key={"task_id": task_id})
-
-    if "Item" in response:
-        result = response["Item"]["result"]
-        body = {"task_id": task_id, "result": result}
-        return {"statusCode": 200, "body": json.dumps(body)}
+    task = get_task(task_id)
+    if task:
+        return {"statusCode": 200, "body": task.model_dump_json()}
     else:
         body = {"error": "Task not found"}
         return {"statusCode": 404, "body": json.dumps(body)}
 
 
+@logger.inject_lambda_context
 @event_source(data_class=APIGatewayProxyEvent)
 def lambda_handler(event: APIGatewayProxyEvent, context: LambdaContext):
     if event.http_method == "POST" and event.path == "/fact-check":

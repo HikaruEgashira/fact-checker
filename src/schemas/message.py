@@ -1,11 +1,12 @@
 import os
 from typing import Literal
+import boto3
 from aws_lambda_powertools.utilities.parser import BaseModel
-from schemas.aws import session
 
 QUEUE_NAME = os.environ.get("QUEUE_NAME") or "fact-checker-queue"
 REGION = os.environ.get("AWS_REGION") or "ap-northeast-1"
 
+session = boto3.Session()
 sqs = session.client("sqs")
 sts = session.client("sts")
 

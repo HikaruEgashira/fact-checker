@@ -1,4 +1,5 @@
 import json
+import boto3
 from aws_lambda_powertools.utilities.batch import (
     BatchProcessor,
     EventType,
@@ -10,10 +11,9 @@ from aws_lambda_powertools import Logger
 
 from schemas.message import ExecuteMessage
 from schemas.task import Task, update_task
-from schemas.aws import session
 
 # Initialize AWS clients
-bedrock = session.client("bedrock-runtime")
+bedrock = boto3.client("bedrock-runtime")
 processor = BatchProcessor(event_type=EventType.SQS)
 logger = Logger()
 
