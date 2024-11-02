@@ -23,11 +23,11 @@ def enqueue_fact_check_task(text: str, context: LambdaContext):
 
     # Send the task to the queue
     message = ExecuteMessage(text=text, task_id=task_id)
-    response = send_message(message)
+    send_message(message)
 
     return {
         "statusCode": 200,
-        "body": json.dumps({"task_id": task_id, "sqs_id": response["MessageId"]}),
+        "body": json.dumps({"task_id": task_id}),
     }
 
 

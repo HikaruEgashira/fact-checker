@@ -13,7 +13,7 @@
 # ---
 # name: test_handle_request
   dict({
-    'body': '{"task_id": "unique-request-id", "sqs_id": "4d88a855-fef3-4bb7-83b0-8e1258b00177"}',
+    'body': '{"task_id": "unique-request-id"}',
     'statusCode': 200,
   })
 # ---
