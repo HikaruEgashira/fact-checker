@@ -44,15 +44,11 @@ def check_task_status(task_id: str, context: LambdaContext):
 @event_source(data_class=APIGatewayProxyEvent)
 def lambda_handler(event: APIGatewayProxyEvent, context: LambdaContext):
     if event.http_method == "POST" and event.path == "/fact-check":
-        body = json.loads(event["body"])
-        text = body["text"]
+        text = json.loads(event["body"])["text"]
         return enqueue_fact_check_task(text, context)
-    elif (
-        event.http_method == "GET"
-        and event.path.startswith("/fact-check/")
-        and "task_id" in event.path_parameters
-    ):
-        return check_task_status(event["pathParameters"]["task_id"], context)
+    elif event.http_method == "GET" and event.path.startswith("/fact-check/"):
+        task_id = event.path.split("/")[-1]
+        return check_task_status(task_id, context)
     else:
         body = {"error": "Invalid request"}
         return {"statusCode": 400, "body": json.dumps(body)}

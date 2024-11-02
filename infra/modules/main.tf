@@ -145,55 +145,40 @@ resource "aws_cloudwatch_log_group" "fact_checker_handler" {
   retention_in_days = 30
 }
 
+# API Gateway
+
 resource "aws_api_gateway_rest_api" "fact_checker_api" {
-  name        = "fact_cheker_${var.stage}"
-  description = "API for fact-checking texts"
+  name        = "fact_checker_api_${var.stage}"
+  description = "fact-checker API"
+  body = templatefile("${path.module}/openapi.yaml", {
+    aws_region_name     = var.aws_region
+    lambda_function_arn = aws_lambda_function.fact_checker_api.arn
+    stage               = var.stage
+  })
 }
 
-resource "aws_api_gateway_resource" "fact_checker_resource" {
-  rest_api_id = aws_api_gateway_rest_api.fact_checker_api.id
-  parent_id   = aws_api_gateway_rest_api.fact_checker_api.root_resource_id
-  path_part   = "fact-check"
-}
-
-resource "aws_api_gateway_method" "post_fact_check" {
-  rest_api_id   = aws_api_gateway_rest_api.fact_checker_api.id
-  resource_id   = aws_api_gateway_resource.fact_checker_resource.id
-  http_method   = "POST"
-  authorization = "NONE"
-}
-
-resource "aws_api_gateway_integration" "post_fact_checker_integration" {
-  rest_api_id             = aws_api_gateway_rest_api.fact_checker_api.id
-  resource_id             = aws_api_gateway_resource.fact_checker_resource.id
-  http_method             = aws_api_gateway_method.post_fact_check.http_method
-  type                    = "AWS_PROXY"
-  integration_http_method = "POST"
-  uri                     = aws_lambda_function.fact_checker_api.invoke_arn
-}
-
-resource "aws_api_gateway_method" "get_fact_checker_status" {
-  rest_api_id   = aws_api_gateway_rest_api.fact_checker_api.id
-  resource_id   = aws_api_gateway_resource.fact_checker_resource.id
-  http_method   = "GET"
-  authorization = "NONE"
-}
-
-resource "aws_api_gateway_integration" "get_fact_checker_status_integration" {
-  rest_api_id             = aws_api_gateway_rest_api.fact_checker_api.id
-  resource_id             = aws_api_gateway_resource.fact_checker_resource.id
-  http_method             = aws_api_gateway_method.get_fact_checker_status.http_method
-  type                    = "AWS_PROXY"
-  integration_http_method = "POST"
-  uri                     = aws_lambda_function.fact_checker_api.invoke_arn
+resource "aws_lambda_permission" "api_gateway_invoke" {
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.fact_checker_api.arn
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gateway_rest_api.fact_checker_api.execution_arn}/*/*"
 }
 
 resource "aws_api_gateway_deployment" "fact_checker_api_deployment" {
-  depends_on = [
-    aws_api_gateway_integration.post_fact_checker_integration,
-    aws_api_gateway_integration.get_fact_checker_status_integration
-  ]
-
   rest_api_id = aws_api_gateway_rest_api.fact_checker_api.id
-  stage_name  = var.stage
+
+  triggers = {
+    redeployment = sha1(jsonencode(aws_api_gateway_rest_api.fact_checker_api.body))
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_api_gateway_stage" "fact_checker_api_stage" {
+  stage_name    = var.stage
+  rest_api_id   = aws_api_gateway_rest_api.fact_checker_api.id
+  deployment_id = aws_api_gateway_deployment.fact_checker_api_deployment.id
 }

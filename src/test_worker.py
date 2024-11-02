@@ -4,7 +4,7 @@ import pytest
 import json
 
 
-def test_record_handler():
+def test_worker():
     event = SQSRecord(
         {
             "messageId": "test-message-id",

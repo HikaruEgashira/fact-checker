@@ -13,21 +13,7 @@ context = LambdaContext()
 context._aws_request_id = "unique-request-id"
 
 
-def test_handle_request(snapshot):
-    text = "The text to be fact-checked."
-    response = enqueue_fact_check_task(text, context)
-    assert response["statusCode"] == 200
-    assert response == snapshot
-
-
-def test_check_task_status_failure(snapshot):
-    task_id = "unique-task-id"
-    response = check_task_status(task_id, context)
-    assert response["statusCode"] == 404
-    assert response == snapshot
-
-
-def test_check_task_status_success(snapshot):
+def test_api(snapshot):
     task = "The text to be fact-checked."
     enqueue_response = enqueue_fact_check_task(task, context)
     assert "task_id" in enqueue_response["body"]

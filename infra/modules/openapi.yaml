@@ -1,0 +1,73 @@
+openapi: 3.0.0
+info:
+  title: fact_check_api_${stage}
+  description: API for performing fact-checking on given texts.
+  version: 1.0.0
+
+paths:
+  /fact-check:
+    post:
+      summary: Submit a text for fact-checking
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                text:
+                  type: string
+                  description: The text to be fact-checked.
+              required:
+                - text
+      responses:
+        '200':
+          description: Task created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  task_id:
+                    type: string
+                    description: Unique task ID
+      x-amazon-apigateway-integration:
+        uri: arn:aws:apigateway:${aws_region_name}:lambda:path/2015-03-31/functions/${lambda_function_arn}/invocations
+        passthroughBehavior: when_no_templates
+        httpMethod: POST
+        type: aws_proxy
+
+  /fact-check/{task_id}:
+    get:
+      summary: Retrieve the fact-checking result for a given task ID
+      parameters:
+        - in: path
+          name: task_id
+          required: true
+          schema:
+            type: string
+          description: Unique task ID
+      responses:
+        '200':
+          description: Fact-checking result retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  task_id:
+                    type: string
+                    description: Unique task ID
+                  result:
+                    type: string
+                    enum: [accurate, inaccurate, false, indeterminate]
+                    description: Fact-checking result
+      x-amazon-apigateway-integration:
+        uri: arn:aws:apigateway:${aws_region_name}:lambda:path/2015-03-31/functions/${lambda_function_arn}/invocations
+        passthroughBehavior: when_no_templates
+        httpMethod: POST
+        type: aws_proxy
+x-amazon-apigateway-request-validators:
+  all:
+    validateRequestParameters: true
+    validateRequestBody: true

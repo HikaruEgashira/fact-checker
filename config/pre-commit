@@ -7,6 +7,7 @@ ruff check --fix
 
 cd infra/staging
 terraform apply -auto-approve
+export API_ENDPOINT=$(terraform output api_endpoint | tr -d '"')
 cd -
 
 export TABLE_NAME=fact-checker-results-staging

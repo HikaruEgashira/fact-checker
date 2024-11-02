@@ -7,6 +7,7 @@ ruff check
 
 cd infra/production
 terraform apply -auto-approve
+export API_ENDPOINT=$(terraform output api_endpoint | tr -d '"')
 cd -
 
 venv/bin/pytest

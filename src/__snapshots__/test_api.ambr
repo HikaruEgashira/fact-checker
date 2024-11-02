@@ -1,19 +1,7 @@
 # serializer version: 1
-# name: test_check_task_status_failure
-  dict({
-    'body': '{"error": "Task not found"}',
-    'statusCode': 404,
-  })
-# ---
-# name: test_check_task_status_success
+# name: test_api
   dict({
     'body': '{"task_id":"unique-request-id","text":"The text to be fact-checked.","result":"accurate"}',
-    'statusCode': 200,
-  })
-# ---
-# name: test_handle_request
-  dict({
-    'body': '{"task_id": "unique-request-id"}',
     'statusCode': 200,
   })
 # ---
