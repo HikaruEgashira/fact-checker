@@ -26,7 +26,7 @@ This project is an API server for performing fact-checking on given texts. When 
 
 3. Deploy the infrastructure using Terraform:
    ```sh
-   cd infrastructure/terraform
+   cd infra/production
    terraform init
    terraform apply
    ```
