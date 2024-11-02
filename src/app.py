@@ -1,27 +1,11 @@
 import argparse
-import json
-from api import lambda_handler
-
-
-def submit_fact_check_request(text: str):
-    event = {
-        "path": "/fact-check",
-        "httpMethod": "POST",
-        "body": json.dumps({"text": text}),
-    }
-    print(lambda_handler(event, None))  # type: ignore
-
-
-def check_fact_check_status(task_id: str):
-    event = {
-        "path": f"/fact-check/{task_id}",
-        "httpMethod": "GET",
-        "pathParameters": {"task_id": task_id},
-    }
-    print(lambda_handler(event, None))  # type: ignore
+from src.lambda_api import enqueue_fact_check_task, check_task_status
+from aws_lambda_powertools.utilities.typing import LambdaContext
 
 
 def main():
+    context = LambdaContext()
+
     parser = argparse.ArgumentParser(description="Fact Checker CLI")
     subparsers = parser.add_subparsers(dest="command")
 
@@ -34,9 +18,9 @@ def main():
     args = parser.parse_args()
     match args.command:
         case "submit":
-            submit_fact_check_request(args.text)
+            enqueue_fact_check_task(args.text, context)
         case "status":
-            check_fact_check_status(args.task_id)
+            check_task_status(args.task_id, context)
         case _:
             parser.print_help()
 

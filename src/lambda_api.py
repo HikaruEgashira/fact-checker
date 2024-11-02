@@ -16,12 +16,9 @@ from schemas.message import ExecuteMessage
 logger = Logger()
 
 
-def enqueue_fact_check_task(event, context: LambdaContext):
-    body = json.loads(event["body"])
-    text = body["text"]
-
+def enqueue_fact_check_task(text: str, context: LambdaContext):
     # Save the task to DynamoDB
-    task_id = context.aws_request_id if context else str(uuid.uuid4())
+    task_id = str(uuid.uuid4())
     task = Task(task_id=task_id, text=text, result="pending")
     update_task(task)
 
@@ -35,8 +32,7 @@ def enqueue_fact_check_task(event, context: LambdaContext):
     }
 
 
-def check_task_status(event, context: LambdaContext):
-    task_id = event["pathParameters"]["task_id"]
+def check_task_status(task_id: str, context: LambdaContext):
     task = get_task(task_id)
     if task:
         return {"statusCode": 200, "body": task.model_dump_json()}
@@ -49,13 +45,15 @@ def check_task_status(event, context: LambdaContext):
 @event_source(data_class=APIGatewayProxyEvent)
 def lambda_handler(event: APIGatewayProxyEvent, context: LambdaContext):
     if event.http_method == "POST" and event.path == "/fact-check":
-        return enqueue_fact_check_task(event, context)
+        body = json.loads(event["body"])
+        text = body["text"]
+        return enqueue_fact_check_task(text, context)
     elif (
         event.http_method == "GET"
         and event.path.startswith("/fact-check/")
         and "task_id" in event.path_parameters
     ):
-        return check_task_status(event, context)
+        return check_task_status(event["pathParameters"]["task_id"], context)
     else:
         body = {"error": "Invalid request"}
         return {"statusCode": 400, "body": json.dumps(body)}

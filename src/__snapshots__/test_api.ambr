@@ -1,0 +1,19 @@
+# serializer version: 1
+# name: test_check_task_status_failure
+  dict({
+    'body': '{"error": "Task not found"}',
+    'statusCode': 404,
+  })
+# ---
+# name: test_check_task_status_success
+  dict({
+    'body': '{"task_id":"9c28f467-2316-4288-8f0e-f3c855dd53a4","text":"The text to be fact-checked.","result":"accurate"}',
+    'statusCode': 200,
+  })
+# ---
+# name: test_handle_request
+  dict({
+    'body': '{"task_id": "3df849d0-d7e6-4756-a608-871812e75d96", "sqs_id": "cd8f3bff-9003-44c3-a5df-82d29d0e2b19"}',
+    'statusCode': 200,
+  })
+# ---

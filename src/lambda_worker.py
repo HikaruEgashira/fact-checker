@@ -10,7 +10,7 @@ from aws_lambda_powertools.utilities.typing import LambdaContext
 from aws_lambda_powertools import Logger
 
 from schemas.message import ExecuteMessage
-from schemas.task import Task, update_task
+from schemas.task import Task, update_task, Status
 
 # Initialize AWS clients
 bedrock = boto3.client("bedrock-runtime")

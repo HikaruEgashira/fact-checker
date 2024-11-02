@@ -21,6 +21,7 @@ This project is an API server for performing fact-checking on given texts. When 
 2. Install the required dependencies:
    ```sh
    pip install -r requirements.txt
+   cp pre-commit .git/hooks
    ```
 
 3. Deploy the infrastructure using Terraform:

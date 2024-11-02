@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+# Run ruff to check and fix code style issues
+ruff check --fix
+
+# Run pytest to update snapshots
+venv/bin/pytest --snapshot-update
+
+# Add changes to git
+git add .
