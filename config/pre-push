@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-
+set -e
 
 terraform fmt -check
 ruff check
@@ -10,6 +10,3 @@ terraform apply -auto-approve
 cd -
 
 venv/bin/pytest
-
-# Add changes to git
-git add .
