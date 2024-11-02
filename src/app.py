@@ -1,10 +1,12 @@
 import argparse
-from src.lambda_api import enqueue_fact_check_task, check_task_status
+from lambda_api import enqueue_fact_check_task, check_task_status
 from aws_lambda_powertools.utilities.typing import LambdaContext
+import uuid
 
 
 def main():
     context = LambdaContext()
+    context._aws_request_id = str(uuid.uuid4())
 
     parser = argparse.ArgumentParser(description="Fact Checker CLI")
     subparsers = parser.add_subparsers(dest="command")
@@ -18,9 +20,9 @@ def main():
     args = parser.parse_args()
     match args.command:
         case "submit":
-            enqueue_fact_check_task(args.text, context)
+            print(enqueue_fact_check_task(args.text, context))
         case "status":
-            check_task_status(args.task_id, context)
+            print(check_task_status(args.task_id, context))
         case _:
             parser.print_help()
 
