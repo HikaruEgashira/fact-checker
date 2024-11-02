@@ -1,15 +1,3 @@
-provider "aws" {
-  region = var.aws_region
-}
-
-terraform {
-  backend "s3" {
-    bucket = "hikae-terraform"
-    key    = "fact-checker/terraform.tfstate"
-    region = "ap-northeast-1"
-  }
-}
-
 resource "aws_sqs_queue" "fact_checker_queue" {
   name = var.queue_name
 }
@@ -26,7 +14,7 @@ resource "aws_dynamodb_table" "fact_checker_results" {
 }
 
 resource "aws_iam_role" "lambda_execution_role" {
-  name = "lambda_execution_role"
+  name = "lambda_execution_role_${var.stage}"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -44,7 +32,7 @@ resource "aws_iam_role" "lambda_execution_role" {
 }
 
 resource "aws_iam_policy" "lambda_policy" {
-  name = "lambda_policy"
+  name = "lambda_policy_${var.stage}"
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -90,15 +78,15 @@ resource "aws_iam_role_policy_attachment" "lambda_basic_execution" {
 
 data "archive_file" "deployment_package" {
   type        = "zip"
-  source_dir  = "../src"
-  output_path = "../package.zip"
+  source_dir  = "../../src"
+  output_path = "../../package-${var.stage}.zip"
   excludes    = ["__snapshots__"]
 }
 
 resource "aws_lambda_function" "fact_checker_api" {
-  function_name    = "fact_checker_api"
+  function_name    = "fact_checker_api_${var.stage}"
   role             = aws_iam_role.lambda_execution_role.arn
-  handler          = "api.lambda_handler"
+  handler          = "lambda_api.lambda_handler"
   runtime          = "python3.12"
   filename         = data.archive_file.deployment_package.output_path
   source_code_hash = filebase64sha256(data.archive_file.deployment_package.output_path)
@@ -108,7 +96,7 @@ resource "aws_lambda_function" "fact_checker_api" {
   ]
 
   logging_config {
-    log_group  = "/fact_checker"
+    log_group  = "/fact_checker_${var.stage}"
     log_format = "JSON"
   }
 
@@ -121,9 +109,9 @@ resource "aws_lambda_function" "fact_checker_api" {
 }
 
 resource "aws_lambda_function" "fact_checker_worker" {
-  function_name    = "fact_checker_worker"
+  function_name    = "fact_checker_worker_${var.stage}"
   role             = aws_iam_role.lambda_execution_role.arn
-  handler          = "worker.lambda_handler"
+  handler          = "lambda_worker.lambda_handler"
   runtime          = "python3.12"
   filename         = data.archive_file.deployment_package.output_path
   source_code_hash = filebase64sha256(data.archive_file.deployment_package.output_path)
@@ -133,7 +121,7 @@ resource "aws_lambda_function" "fact_checker_worker" {
   ]
 
   logging_config {
-    log_group  = "/fact_checker"
+    log_group  = "/fact_checker_${var.stage}"
     log_format = "JSON"
   }
 
@@ -153,12 +141,12 @@ resource "aws_lambda_event_source_mapping" "sqs_event_source" {
 }
 
 resource "aws_cloudwatch_log_group" "fact_checker_handler" {
-  name              = "/fact_checker"
+  name              = "/fact_checker_${var.stage}"
   retention_in_days = 30
 }
 
 resource "aws_api_gateway_rest_api" "fact_checker_api" {
-  name        = "FactCheckAPI"
+  name        = "fact_cheker_${var.stage}"
   description = "API for fact-checking texts"
 }
 
@@ -207,5 +195,5 @@ resource "aws_api_gateway_deployment" "fact_checker_api_deployment" {
   ]
 
   rest_api_id = aws_api_gateway_rest_api.fact_checker_api.id
-  stage_name  = "prod"
+  stage_name  = var.stage
 }

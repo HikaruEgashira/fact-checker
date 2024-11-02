@@ -1,12 +1,16 @@
 import json
 from time import sleep
+from aws_lambda_powertools.utilities.typing import LambdaContext
+
 from lambda_api import (
     enqueue_fact_check_task,
     check_task_status,
 )
-from aws_lambda_powertools.utilities.typing import LambdaContext
+from schemas.task import delete_task
+
 
 context = LambdaContext()
+context._aws_request_id = "unique-request-id"
 
 
 def test_handle_request(snapshot):
@@ -38,3 +42,5 @@ def test_check_task_status_success(snapshot):
         retry -= 1
     assert check_response["statusCode"] == 200
     assert check_response == snapshot
+
+    delete_task(task_id)

@@ -1,7 +1,16 @@
 #!/usr/bin/env bash
 
+set -e
+
 terraform fmt
 ruff check --fix
+
+cd infra/staging
+terraform apply -auto-approve
+cd -
+
+export TABLE_NAME=fact-checker-results-staging
+export QUEUE_NAME=fact-checker-queue-staging
 venv/bin/pytest --snapshot-update
 
 # Add changes to git

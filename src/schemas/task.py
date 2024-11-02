@@ -26,3 +26,8 @@ def update_task(task: Task):
 def get_task(task_id: str):
     response = table.get_item(Key={"task_id": task_id})
     return Task(**response["Item"]) if "Item" in response else None  # type: ignore
+
+
+# only for testing purposes
+def delete_task(task_id: str):
+    return table.delete_item(Key={"task_id": task_id})
