@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+cd infrastructure
+terraform apply -auto-approve

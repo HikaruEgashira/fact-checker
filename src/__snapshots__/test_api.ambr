@@ -7,13 +7,13 @@
 # ---
 # name: test_check_task_status_success
   dict({
-    'body': '{"task_id":"9c28f467-2316-4288-8f0e-f3c855dd53a4","text":"The text to be fact-checked.","result":"accurate"}',
+    'body': '{"task_id":"4c2a4b49-4075-4afe-965f-f29e6824a2b4","text":"The text to be fact-checked.","result":"pending"}',
     'statusCode': 200,
   })
 # ---
 # name: test_handle_request
   dict({
-    'body': '{"task_id": "3df849d0-d7e6-4756-a608-871812e75d96", "sqs_id": "cd8f3bff-9003-44c3-a5df-82d29d0e2b19"}',
+    'body': '{"task_id": "7d423e52-e849-41b2-a915-3b11fdfa2146", "sqs_id": "6e94e40c-f85f-486f-9b6a-15c0eb6b662b"}',
     'statusCode': 200,
   })
 # ---
