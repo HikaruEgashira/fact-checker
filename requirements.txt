@@ -5,4 +5,3 @@ aws-lambda-powertools[parser]
 ruff
 pytest
 syrupy
-pre-commit

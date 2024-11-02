@@ -92,6 +92,7 @@ data "archive_file" "deployment_package" {
   type        = "zip"
   source_dir  = "../src"
   output_path = "../package.zip"
+  excludes    = ["__snapshots__"]
 }
 
 resource "aws_lambda_function" "fact_checker_api" {
