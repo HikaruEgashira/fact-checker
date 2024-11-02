@@ -1,5 +1,4 @@
 import json
-import uuid
 from aws_lambda_powertools import Logger
 from aws_lambda_powertools.utilities.typing import LambdaContext
 from aws_lambda_powertools.utilities.data_classes import (
@@ -18,7 +17,7 @@ logger = Logger()
 
 def enqueue_fact_check_task(text: str, context: LambdaContext):
     # Save the task to DynamoDB
-    task_id = str(uuid.uuid4())
+    task_id = context.aws_request_id
     task = Task(task_id=task_id, text=text, result="pending")
     update_task(task)
 

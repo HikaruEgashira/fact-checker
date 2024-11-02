@@ -7,6 +7,7 @@ from lambda_api import (
 from aws_lambda_powertools.utilities.typing import LambdaContext
 
 context = LambdaContext()
+context._aws_request_id = "unique-request-id"
 
 
 def test_handle_request(snapshot):

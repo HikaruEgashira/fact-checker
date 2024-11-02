@@ -1,4 +1,15 @@
 #!/usr/bin/env bash
 
-cd infrastructure
+
+
+terraform fmt -check
+ruff check
+
+cd infra/production
 terraform apply -auto-approve
+cd -
+
+venv/bin/pytest
+
+# Add changes to git
+git add .
