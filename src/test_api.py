@@ -3,10 +3,10 @@ from time import sleep
 from aws_lambda_powertools.utilities.typing import LambdaContext
 
 from lambda_api import (
-    enqueue_fact_check_task,
-    check_task_status,
+    enqueue_fact_check_state,
+    check_state_status,
 )
-from schemas.task import delete_task
+from schemas.state import delete_state
 
 
 context = LambdaContext()
@@ -14,14 +14,14 @@ context._aws_request_id = "unique-request-id"
 
 
 def test_api(snapshot):
-    task = "The text to be fact-checked."
-    enqueue_response = enqueue_fact_check_task(task, context)
-    assert "task_id" in enqueue_response["body"]
-    task_id = json.loads(enqueue_response["body"])["task_id"]
+    state = "The text to be fact-checked."
+    enqueue_response = enqueue_fact_check_state(state, context)
+    assert "id" in enqueue_response["body"]
+    state_id = json.loads(enqueue_response["body"])["id"]
     check_response = {}
     retry = 10
     while retry > 0:
-        check_response = check_task_status(task_id, context)
+        check_response = check_state_status(state_id, context)
         if json.loads(check_response["body"])["result"] != "pending":
             break
         sleep(1)
@@ -29,4 +29,4 @@ def test_api(snapshot):
     assert check_response["statusCode"] == 200
     assert check_response == snapshot
 
-    delete_task(task_id)
+    delete_state(state_id)

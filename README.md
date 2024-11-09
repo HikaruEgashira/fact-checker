@@ -54,17 +54,17 @@ python src/app.py
 - **Response**:
   ```json
   {
-    "task_id": "unique-task-id"
+    "id": "unique-task-id"
   }
   ```
 
-#### GET /fact-check/{task_id}
+#### GET /fact-check/{id}
 
 - **Description**: Retrieve the fact-checking result for a given task ID.
 - **Response**:
   ```json
   {
-    "task_id": "unique-task-id",
+    "id": "unique-task-id",
     "result": "accurate" | "inaccurate" | "false" | "indeterminate"
   }
   ```
@@ -82,5 +82,5 @@ python src/app.py submit --text "The text to be fact-checked."
 
 To check the status of a fact-checking task via the CLI, use the following command:
 ```sh
-python src/app.py status --task_id "unique-task-id"
+python src/app.py status --id "unique-task-id"
 ```

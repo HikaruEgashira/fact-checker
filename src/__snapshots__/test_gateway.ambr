@@ -1,13 +1,13 @@
 # serializer version: 1
 # name: test_gateway
   dict({
-    'task_id': 'dummy-task-id',
+    'id': 'dummy-state-id',
+    'result': 'pending',
   })
 # ---
 # name: test_gateway.1
   dict({
+    'id': 'dummy-state-id',
     'result': 'accurate',
-    'task_id': 'dummy-task-id',
-    'text': 'The text to be fact-checked.',
   })
 # ---

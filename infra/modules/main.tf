@@ -5,10 +5,10 @@ resource "aws_sqs_queue" "fact_checker_queue" {
 resource "aws_dynamodb_table" "fact_checker_results" {
   name         = var.dynamodb_table_name
   billing_mode = "PAY_PER_REQUEST"
-  hash_key     = "task_id"
+  hash_key     = "id"
 
   attribute {
-    name = "task_id"
+    name = "id"
     type = "S"
   }
 }

@@ -1,14 +1,14 @@
 import boto3
 from aws_lambda_powertools import Logger
-from schemas.task import Task, update_task, Status
-from src.schemas.message import ExecuteMessage
+from schemas.state import State, update_state, Status
+from schemas.command import EntryCommand
 
 # Initialize AWS clients
 bedrock = boto3.client("bedrock-runtime")
 logger = Logger()
 
 
-def execute(message: ExecuteMessage):
+def entry_command(command: EntryCommand):
     response = bedrock.converse(
         modelId="anthropic.claude-3-haiku-20240307-v1:0",
         messages=[
@@ -31,7 +31,7 @@ def execute(message: ExecuteMessage):
             {"role": "assistant", "content": [{"text": "accurate"}]},
             {
                 "role": "user",
-                "content": [{"text": message.text}],
+                "content": [{"text": command.text}],
             },
         ],
         inferenceConfig={"maxTokens": 512, "temperature": 0.5, "topP": 0.9},
@@ -41,9 +41,8 @@ def execute(message: ExecuteMessage):
         raise ValueError(f"Invalid response: {response_text}")
 
     logger.info(f"Received response: {response_text}")
-    task = Task(
-        task_id=message.task_id,
-        text=message.text,
+    state = State(
+        id=command.id,
         result=response_text,
     )
-    update_task(task)
+    update_state(state)

@@ -1,5 +1,5 @@
 import argparse
-from lambda_api import enqueue_fact_check_task, check_task_status
+from lambda_api import enqueue_fact_check_state, check_state_status
 from aws_lambda_powertools.utilities.typing import LambdaContext
 import uuid
 
@@ -15,14 +15,14 @@ def main():
     submit_parser.add_argument("--text", required=True)
 
     status_parser = subparsers.add_parser("status")
-    status_parser.add_argument("--task_id", required=True)
+    status_parser.add_argument("--state-id", required=True)
 
     args = parser.parse_args()
     match args.command:
         case "submit":
-            print(enqueue_fact_check_task(args.text, context))
+            print(enqueue_fact_check_state(args.text, context))
         case "status":
-            print(check_task_status(args.task_id, context))
+            print(check_state_status(args.state_id, context))
         case _:
             parser.print_help()
 

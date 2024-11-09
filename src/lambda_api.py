@@ -6,37 +6,34 @@ from aws_lambda_powertools.utilities.data_classes import (
     event_source,
 )
 
-
-from schemas.task import Task, update_task, get_task
-from schemas.message import send_message
-
-from schemas.message import ExecuteMessage
+from schemas.state import State, update_state, get_state
+from schemas.command import EntryCommand, send_command
 
 logger = Logger()
 
 
-def enqueue_fact_check_task(text: str, context: LambdaContext):
-    # Save the task to DynamoDB
-    task_id = context.aws_request_id
-    task = Task(task_id=task_id, text=text, result="pending")
-    update_task(task)
+def enqueue_fact_check_state(text: str, context: LambdaContext):
+    # Save the state to DynamoDB
+    id = context.aws_request_id
+    state = State(id=id, result="pending")
+    update_state(state)
 
-    # Send the task to the queue
-    message = ExecuteMessage(text=text, task_id=task_id)
-    send_message(message)
+    # Send the state to the queue
+    command = EntryCommand(id=id, text=text)
+    send_command(command)
 
     return {
         "statusCode": 200,
-        "body": json.dumps({"task_id": task_id}),
+        "body": state.model_dump_json(),
     }
 
 
-def check_task_status(task_id: str, context: LambdaContext):
-    task = get_task(task_id)
-    if task:
-        return {"statusCode": 200, "body": task.model_dump_json()}
+def check_state_status(state_id: str, context: LambdaContext):
+    state = get_state(state_id)
+    if state:
+        return {"statusCode": 200, "body": state.model_dump_json()}
     else:
-        body = {"error": "Task not found"}
+        body = {"error": "State not found"}
         return {"statusCode": 404, "body": json.dumps(body)}
 
 
@@ -45,10 +42,10 @@ def check_task_status(task_id: str, context: LambdaContext):
 def lambda_handler(event: APIGatewayProxyEvent, context: LambdaContext):
     if event.http_method == "POST" and event.path == "/fact-check":
         text = json.loads(event["body"])["text"]
-        return enqueue_fact_check_task(text, context)
+        return enqueue_fact_check_state(text, context)
     elif event.http_method == "GET" and event.path.startswith("/fact-check/"):
-        task_id = event.path.split("/")[-1]
-        return check_task_status(task_id, context)
+        state_id = event.path.split("/")[-1]
+        return check_state_status(state_id, context)
     else:
         body = {"error": "Invalid request"}
         return {"statusCode": 400, "body": json.dumps(body)}

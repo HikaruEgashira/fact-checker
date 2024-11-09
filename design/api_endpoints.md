@@ -12,17 +12,17 @@
 - **Response**:
   ```json
   {
-    "task_id": "unique-task-id"
+    "id": "unique-state-id"
   }
   ```
 
-## GET /fact-check/{task_id}
+## GET /fact-check/{id}
 
-- **Description**: Retrieve the fact-checking result for a given task ID.
+- **Description**: Retrieve the fact-checking result for a given state ID.
 - **Response**:
   ```json
   {
-    "task_id": "unique-task-id",
+    "id": "unique-state-id",
     "result": "accurate" | "inaccurate" | "false" | "indeterminate"
   }
   ```

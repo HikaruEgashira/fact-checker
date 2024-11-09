@@ -3,7 +3,7 @@
 set -e
 
 terraform fmt
-ruff check --fix
+venv/bin/ruff check --fix
 
 cd infra/staging
 terraform apply -auto-approve

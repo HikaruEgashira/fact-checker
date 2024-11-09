@@ -18,7 +18,7 @@ The Fact Checker system is designed to perform fact-checking on given texts. The
 The API server is implemented using AWS Lambda functions. It provides two main endpoints:
 
 - `POST /fact-check`: Submits a text for fact-checking.
-- `GET /fact-check/{task_id}`: Retrieves the fact-checking result for a given task ID.
+- `GET /fact-check/{id}`: Retrieves the fact-checking result for a given ID.
 
 The API server handles incoming requests, sends tasks to the queue, and retrieves results from the database.
 

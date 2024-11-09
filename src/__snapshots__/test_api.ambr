@@ -1,7 +1,7 @@
 # serializer version: 1
 # name: test_api
   dict({
-    'body': '{"task_id":"unique-request-id","text":"The text to be fact-checked.","result":"accurate"}',
+    'body': '{"id":"unique-request-id","result":"accurate"}',
     'statusCode': 200,
   })
 # ---

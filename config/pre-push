@@ -3,7 +3,7 @@
 set -e
 
 terraform fmt -check
-ruff check
+venv/bin/ruff check
 
 cd infra/production
 terraform apply -auto-approve

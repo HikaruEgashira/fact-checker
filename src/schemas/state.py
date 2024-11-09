@@ -13,21 +13,20 @@ FactCheckOutput = Literal["accurate", "inaccurate", "false", "indeterminate"]
 Status = Union[Literal["pending"], FactCheckOutput]
 
 
-class Task(BaseModel):
-    task_id: str
-    text: str
+class State(BaseModel):
+    id: str
     result: Status
 
 
-def update_task(task: Task):
-    return table.put_item(Item=task.model_dump())
+def update_state(state: State):
+    return table.put_item(Item=state.model_dump())
 
 
-def get_task(task_id: str):
-    response = table.get_item(Key={"task_id": task_id})
-    return Task(**response["Item"]) if "Item" in response else None  # type: ignore
+def get_state(state_id: str):
+    response = table.get_item(Key={"id": state_id})
+    return State(**response["Item"]) if "Item" in response else None  # type: ignore
 
 
 # only for testing purposes
-def delete_task(task_id: str):
-    return table.delete_item(Key={"task_id": task_id})
+def delete_state(state_id: str):
+    return table.delete_item(Key={"id": state_id})
