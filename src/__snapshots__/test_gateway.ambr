@@ -1,14 +1,14 @@
 # serializer version: 1
 # name: test_gateway
   dict({
-    'id': 'dummy-state-id',
+    'id': '***',
     'output': '',
     'status': 'pending',
   })
 # ---
 # name: test_gateway.1
   dict({
-    'id': 'dummy-state-id',
+    'id': '***',
     'output': '',
     'status': 'pending',
   })

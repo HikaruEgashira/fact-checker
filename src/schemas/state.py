@@ -2,12 +2,14 @@ import os
 from typing import Literal, Union
 import boto3
 from aws_lambda_powertools.utilities.parser import BaseModel
+from aws_lambda_powertools.logging import Logger
 
 
 TABLE_NAME = os.environ.get("TABLE_NAME") or "fact-checker-results"
 
 dynamodb = boto3.resource("dynamodb")
 table = dynamodb.Table(TABLE_NAME)
+logger = Logger()
 
 FactCheckOutput = str
 Status = Union[Literal["pending"], Literal["completed"]]
@@ -16,6 +18,8 @@ _session_id: str
 
 
 def current_session():
+    if not _session_id:
+        logger.error("Session ID not set")
     return _session_id
 
 

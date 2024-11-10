@@ -1,4 +1,3 @@
-import json
 from aws_lambda_powertools.utilities.batch import (
     BatchProcessor,
     EventType,
@@ -18,9 +17,10 @@ logger = Logger()
 
 
 def record_handler(record: SQSRecord):
-    req = Request(**json.loads(record.body))
+    logger.info(f"Processing record: {record.json_body}")
+    req = Request(**record.json_body)
     state = get_state(req.id)
-    if state is None or state.status == "completed":
+    if state is None or state.status != "pending":
         logger.warning(f"Invalid state: {req.id}")
         return
 

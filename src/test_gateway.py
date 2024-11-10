@@ -21,7 +21,7 @@ def test_gateway(snapshot):
     assert response.status == 200
 
     response_data = json.loads(response.data)
-    response_data["id"] = "dummy-state-id"
+    response_data["id"] = "***"
     assert response_data == snapshot
 
     # GET /fact-check/{id}
@@ -35,5 +35,5 @@ def test_gateway(snapshot):
     assert response.status == 200
 
     response_data = json.loads(response.data)
-    response_data["id"] = "dummy-state-id"
+    response_data["id"] = "***"
     assert response_data == snapshot

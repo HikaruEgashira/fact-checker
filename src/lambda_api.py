@@ -39,6 +39,7 @@ def check_state_status(state_id: str):
 @logger.inject_lambda_context
 @event_source(data_class=APIGatewayProxyEvent)
 def lambda_handler(event: APIGatewayProxyEvent, context: LambdaContext):
+    logger.info(f"Received event: {event}")
     if event.http_method == "POST" and event.path == "/fact-check":
         prompt = json.loads(event["body"])["prompt"]
         return enqueue_fact_check_state(context.aws_request_id, prompt)

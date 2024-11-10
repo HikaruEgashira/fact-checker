@@ -1,4 +1,4 @@
 # serializer version: 1
 # name: test_api
-  '{"id":"unique-request-id","status":"pending","output":""}'
+  '{"id":"unique-request-id","status":"completed","output":"indeterminate"}'
 # ---

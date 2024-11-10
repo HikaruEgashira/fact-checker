@@ -59,12 +59,14 @@ resource "aws_iam_policy" "lambda_policy" {
       },
       {
         Action = [
-          "bedrock:InvokeModel"
+          "bedrock:InvokeModel",
+          "bedrock:InvokeAgent"
         ]
         Effect = "Allow"
         Resource = [
           "arn:aws:bedrock:ap-northeast-1::foundation-model/anthropic.claude-3-haiku-20240307-v1:0",
-          "arn:aws:bedrock:us-west-2:${data.aws_caller_identity.current.account_id}:agent/*"
+          "arn:aws:bedrock:us-west-2:${data.aws_caller_identity.current.account_id}:agent/*",
+          "arn:aws:bedrock:us-west-2:${data.aws_caller_identity.current.account_id}:agent-alias/*"
         ]
       }
     ]

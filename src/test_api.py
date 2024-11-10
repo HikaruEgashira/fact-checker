@@ -8,14 +8,14 @@ from lambda_api import (
 from schemas.state import State, delete_state
 
 
-state_id = "unique-request-id"
-
-
 def test_api(snapshot):
+    state_id = "unique-request-id"
     prompt = "The text to be fact-checked."
+
     enqueue_response = enqueue_fact_check_state(state_id, prompt)
     assert "id" in enqueue_response["body"]
     assert state_id == json.loads(enqueue_response["body"])["id"]
+
     retry = 10
     state: State | None = None
     while retry > 0:
@@ -30,5 +30,6 @@ def test_api(snapshot):
         retry -= 1
 
     assert state is not None
+    assert state.status == "completed"
     assert state.model_dump_json() == snapshot
     delete_state(state_id)
