@@ -2,11 +2,11 @@
 
 ## POST /fact-check
 
-- **Description**: Submit a text for fact-checking.
+- **Description**: Submit a prompt for fact-checking.
 - **Request Body**:
   ```json
   {
-    "text": "The text to be fact-checked."
+    "prompt": "The prompt to be fact-checked."
   }
   ```
 - **Response**:
