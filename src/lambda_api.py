@@ -12,14 +12,13 @@ from schemas.command import EntryCommand, send_command
 logger = Logger()
 
 
-def enqueue_fact_check_state(prompt: str, context: LambdaContext):
+def enqueue_fact_check_state(state_id: str, prompt: str):
     # Save the state to DynamoDB
-    id = context.aws_request_id
-    state = State(id=id, status="pending", output="")
+    state = State(id=state_id, status="pending", output="")
     update_state(state)
 
     # Send the state to the queue
-    command = EntryCommand(id=id, prompt=prompt)
+    command = EntryCommand(prompt=prompt)
     send_command(command)
 
     return {
@@ -28,7 +27,7 @@ def enqueue_fact_check_state(prompt: str, context: LambdaContext):
     }
 
 
-def check_state_status(state_id: str, context: LambdaContext):
+def check_state_status(state_id: str):
     state = get_state(state_id)
     if state:
         return {"statusCode": 200, "body": state.model_dump_json()}
@@ -42,10 +41,10 @@ def check_state_status(state_id: str, context: LambdaContext):
 def lambda_handler(event: APIGatewayProxyEvent, context: LambdaContext):
     if event.http_method == "POST" and event.path == "/fact-check":
         prompt = json.loads(event["body"])["prompt"]
-        return enqueue_fact_check_state(prompt, context)
+        return enqueue_fact_check_state(context.aws_request_id, prompt)
     elif event.http_method == "GET" and event.path.startswith("/fact-check/"):
         state_id = event.path.split("/")[-1]
-        return check_state_status(state_id, context)
+        return check_state_status(state_id)
     else:
         body = {"error": "Invalid request"}
         return {"statusCode": 400, "body": json.dumps(body)}

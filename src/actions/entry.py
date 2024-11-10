@@ -1,13 +1,13 @@
-from schemas.state import State, update_state
+from schemas.state import State, update_state, current_session
 from schemas.command import EntryCommand
 from agents.fact_check import FactCheck
 
 
 def entry_action(command: EntryCommand):
-    response = FactCheck().run(command.id, command.prompt)
+    response = FactCheck().run(command.prompt)
 
     state = State(
-        id=command.id,
+        id=current_session(),
         status="completed",
         output=response,
     )

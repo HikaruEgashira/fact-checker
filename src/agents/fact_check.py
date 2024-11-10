@@ -1,6 +1,7 @@
 import boto3
 from aws_lambda_powertools.logging import Logger
 from typing import Literal
+from schemas.state import current_session
 import os
 
 bedrock_agent = boto3.client("bedrock-agent-runtime", "us-west-2")
@@ -18,13 +19,13 @@ class FactCheck:
 
     @classmethod
     def run(
-        cls, session_id: str, prompt: str
+        cls, prompt: str
     ) -> Literal["accurate", "inaccurate", "false", "indeterminate"]:
         response = bedrock_agent.invoke_agent(
             inputText=prompt,
             agentId=cls.alias_id,
             agentAliasId=cls.alias_id,
-            sessionId=session_id,
+            sessionId=current_session(),
         )
 
         output = (
@@ -34,7 +35,7 @@ class FactCheck:
             .get("text", "")
         )
         if output not in ["accurate", "inaccurate", "false", "indeterminate"]:
-            logger.warning(f"Invalid response: {session_id} {output}")
+            logger.warning(f"Invalid response: {current_session()} {output}")
             return "indeterminate"
 
         return output

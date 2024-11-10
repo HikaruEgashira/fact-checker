@@ -11,11 +11,11 @@ def test_worker():
             "receiptHandle": "test-receipt-handle",
             "body": json.dumps(
                 {
+                    "id": "test-state-id",
                     "command": {
                         "type": "entry",
                         "prompt": "The text to be fact-checked.",
-                        "id": "test-state-id",
-                    }
+                    },
                 }
             ),
             "attributes": {},

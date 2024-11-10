@@ -10,6 +10,7 @@ from aws_lambda_powertools import Logger
 
 from schemas.command import Request
 from actions.entry import entry_action
+from schemas.state import get_state
 
 # Initialize AWS clients
 processor = BatchProcessor(event_type=EventType.SQS)
@@ -18,6 +19,11 @@ logger = Logger()
 
 def record_handler(record: SQSRecord):
     req = Request(**json.loads(record.body))
+    state = get_state(req.id)
+    if state is None or state.status == "completed":
+        logger.warning(f"Invalid state: {req.id}")
+        return
+
     match req.command.type:
         case "entry":
             entry_action(req.command)

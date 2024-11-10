@@ -14,15 +14,17 @@ def main():
     submit_parser = subparsers.add_parser("submit")
     submit_parser.add_argument("--text", required=True)
 
-    status_parser = subparsers.add_parser("status")
+    status_parser = subparsers.add_parser("state")
     status_parser.add_argument("--state-id", required=True)
 
     args = parser.parse_args()
     match args.command:
         case "submit":
-            print(enqueue_fact_check_state(args.text, context))
-        case "status":
-            print(check_state_status(args.state_id, context))
+            print(enqueue_fact_check_state(args.state_id, args.text))
+            return
+        case "state":
+            print(check_state_status(args.state_id))
+            return
         case _:
             parser.print_help()
 
