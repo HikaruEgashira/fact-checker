@@ -1,3 +1,5 @@
+data "aws_caller_identity" "current" {}
+
 resource "aws_sqs_queue" "fact_checker_queue" {
   name = var.queue_name
 }
@@ -59,8 +61,11 @@ resource "aws_iam_policy" "lambda_policy" {
         Action = [
           "bedrock:InvokeModel"
         ]
-        Effect   = "Allow"
-        Resource = "arn:aws:bedrock:ap-northeast-1::foundation-model/anthropic.claude-3-haiku-20240307-v1:0"
+        Effect = "Allow"
+        Resource = [
+          "arn:aws:bedrock:ap-northeast-1::foundation-model/anthropic.claude-3-haiku-20240307-v1:0",
+          "arn:aws:bedrock:us-west-2:${data.aws_caller_identity.current.account_id}:agent/*"
+        ]
       }
     ]
   })
@@ -80,7 +85,11 @@ data "archive_file" "deployment_package" {
   type        = "zip"
   source_dir  = "../../src"
   output_path = "../../package-${var.stage}.zip"
-  excludes    = ["__snapshots__"]
+  excludes = [
+    "__snapshots__",
+    "__pycache__",
+    "test_*.py",
+  ]
 }
 
 resource "aws_lambda_function" "fact_checker_api" {

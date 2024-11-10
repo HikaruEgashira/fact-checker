@@ -18,7 +18,7 @@ queue_url = f"https://sqs.{REGION}.amazonaws.com/{sts.get_caller_identity()['Acc
 
 class EntryCommand(BaseModel):
     type: Literal["entry"] = "entry"
-    text: str
+    prompt: str
     id: str
 
 

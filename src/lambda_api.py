@@ -12,14 +12,14 @@ from schemas.command import EntryCommand, send_command
 logger = Logger()
 
 
-def enqueue_fact_check_state(text: str, context: LambdaContext):
+def enqueue_fact_check_state(prompt: str, context: LambdaContext):
     # Save the state to DynamoDB
     id = context.aws_request_id
-    state = State(id=id, result="pending")
+    state = State(id=id, status="pending", output="")
     update_state(state)
 
     # Send the state to the queue
-    command = EntryCommand(id=id, text=text)
+    command = EntryCommand(id=id, prompt=prompt)
     send_command(command)
 
     return {
@@ -41,8 +41,8 @@ def check_state_status(state_id: str, context: LambdaContext):
 @event_source(data_class=APIGatewayProxyEvent)
 def lambda_handler(event: APIGatewayProxyEvent, context: LambdaContext):
     if event.http_method == "POST" and event.path == "/fact-check":
-        text = json.loads(event["body"])["text"]
-        return enqueue_fact_check_state(text, context)
+        prompt = json.loads(event["body"])["prompt"]
+        return enqueue_fact_check_state(prompt, context)
     elif event.http_method == "GET" and event.path.startswith("/fact-check/"):
         state_id = event.path.split("/")[-1]
         return check_state_status(state_id, context)

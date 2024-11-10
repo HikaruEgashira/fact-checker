@@ -11,7 +11,7 @@ def test_gateway(snapshot):
     http = urllib3.PoolManager()
 
     # POST /fact-check
-    text = {"text": "The text to be fact-checked."}
+    text = {"prompt": "The text to be fact-checked."}
     response = http.request(
         "POST",
         f"{API_ENDPOINT}/fact-check",
@@ -29,7 +29,7 @@ def test_gateway(snapshot):
     retry = 10
     while retry > 0:
         response = http.request("GET", f"{API_ENDPOINT}/fact-check/{state_id}")
-        if json.loads(response.data)["result"] != "pending":
+        if json.loads(response.data)["status"] != "pending":
             break
         retry -= 1
     assert response.status == 200

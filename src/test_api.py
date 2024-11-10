@@ -22,7 +22,7 @@ def test_api(snapshot):
     retry = 10
     while retry > 0:
         check_response = check_state_status(state_id, context)
-        if json.loads(check_response["body"])["result"] != "pending":
+        if json.loads(check_response["body"])["status"] != "pending":
             break
         sleep(1)
         retry -= 1

@@ -9,13 +9,14 @@ TABLE_NAME = os.environ.get("TABLE_NAME") or "fact-checker-results"
 dynamodb = boto3.resource("dynamodb")
 table = dynamodb.Table(TABLE_NAME)
 
-FactCheckOutput = Literal["accurate", "inaccurate", "false", "indeterminate"]
-Status = Union[Literal["pending"], FactCheckOutput]
+FactCheckOutput = str
+Status = Union[Literal["pending"], Literal["completed"]]
 
 
 class State(BaseModel):
     id: str
-    result: Status
+    status: Status
+    output: FactCheckOutput
 
 
 def update_state(state: State):

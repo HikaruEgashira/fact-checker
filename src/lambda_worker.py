@@ -9,7 +9,7 @@ from aws_lambda_powertools.utilities.typing import LambdaContext
 from aws_lambda_powertools import Logger
 
 from schemas.command import Request
-from agents.entry import entry_command
+from actions.entry import entry_action
 
 # Initialize AWS clients
 processor = BatchProcessor(event_type=EventType.SQS)
@@ -20,7 +20,7 @@ def record_handler(record: SQSRecord):
     req = Request(**json.loads(record.body))
     match req.command.type:
         case "entry":
-            entry_command(req.command)
+            entry_action(req.command)
         case _:
             raise ValueError(f"Invalid command type: {req.command.type}")
 

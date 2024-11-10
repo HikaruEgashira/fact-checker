@@ -13,7 +13,7 @@ def test_worker():
                 {
                     "command": {
                         "type": "entry",
-                        "text": "The text to be fact-checked.",
+                        "prompt": "The text to be fact-checked.",
                         "id": "test-state-id",
                     }
                 }

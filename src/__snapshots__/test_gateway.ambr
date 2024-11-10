@@ -2,12 +2,14 @@
 # name: test_gateway
   dict({
     'id': 'dummy-state-id',
-    'result': 'pending',
+    'output': '',
+    'status': 'pending',
   })
 # ---
 # name: test_gateway.1
   dict({
     'id': 'dummy-state-id',
-    'result': 'accurate',
+    'output': '',
+    'status': 'pending',
   })
 # ---

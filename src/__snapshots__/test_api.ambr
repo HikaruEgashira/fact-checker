@@ -1,7 +1,7 @@
 # serializer version: 1
 # name: test_api
   dict({
-    'body': '{"id":"unique-request-id","result":"accurate"}',
+    'body': '{"id":"unique-request-id","status":"pending","output":""}',
     'statusCode': 200,
   })
 # ---
