@@ -7,7 +7,7 @@ info:
 paths:
   /fact-check:
     post:
-      summary: Submit a text for fact-checking
+      summary: Submit a prompt for fact-checking
       requestBody:
         required: true
         content:
@@ -15,11 +15,11 @@ paths:
             schema:
               type: object
               properties:
-                text:
+                prompt:
                   type: string
-                  description: The text to be fact-checked.
+                  description: The prompt to be fact-checked.
               required:
-                - text
+                - prompt
       responses:
         '200':
           description: successfully submitted for fact-checking

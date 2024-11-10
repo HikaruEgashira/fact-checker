@@ -59,24 +59,14 @@ resource "aws_iam_policy" "lambda_policy" {
       },
       {
         Action = [
-          "bedrock:InvokeModel",
-          "bedrock:InvokeAgent"
+          "bedrock:InvokeModel"
         ]
         Effect = "Allow"
         Resource = [
-          aws_bedrockagent_agent.factcheck_actor.agent_arn,
+          "arn:aws:bedrock:*:${data.aws_caller_identity.current.account_id}:inference-profile/us.anthropic.claude-3-5-haiku-20241022-v1:0",
+          "arn:aws:bedrock:*::foundation-model/anthropic.claude-3-5-haiku-20241022-v1:0"
         ]
       },
-      {
-        Action = [
-          "bedrock:InvokeAgent"
-        ]
-        Effect = "Allow"
-        Resource = [
-          # "arn:aws:bedrock:us-west-2:${data.aws_caller_identity.current.account_id}:agent-alias/${aws_bedrockagent_agent_alias.factcheck_actor.agent_alias_id}/${aws_bedrockagent_agent_alias.factcheck_actor.agent_id}"
-          "arn:aws:bedrock:us-west-2:951872725222:agent-alias/5O44DDMAFY/5O44DDMAFY"
-        ]
-      }
     ]
   })
 }
@@ -115,16 +105,14 @@ resource "aws_lambda_function" "fact_checker_api" {
   ]
 
   logging_config {
-    log_group  = "/fact_checker_${var.stage}"
+    log_group  = aws_cloudwatch_log_group.fact_checker_handler.name
     log_format = "JSON"
   }
 
   environment {
     variables = {
-      QUEUE_NAME     = aws_sqs_queue.fact_checker_queue.name
-      TABLE_NAME     = aws_dynamodb_table.fact_checker_results.name
-      AGENT_ID       = aws_bedrockagent_agent.factcheck_actor.id
-      AGENT_ALIAS_ID = aws_bedrockagent_agent_alias.factcheck_actor.agent_alias_id
+      QUEUE_NAME = aws_sqs_queue.fact_checker_queue.name
+      TABLE_NAME = aws_dynamodb_table.fact_checker_results.name
     }
   }
 }
@@ -142,16 +130,14 @@ resource "aws_lambda_function" "fact_checker_worker" {
   ]
 
   logging_config {
-    log_group  = "/fact_checker_${var.stage}"
+    log_group  = aws_cloudwatch_log_group.fact_checker_handler.name
     log_format = "JSON"
   }
 
   environment {
     variables = {
-      QUEUE_NAME     = aws_sqs_queue.fact_checker_queue.name
-      TABLE_NAME     = aws_dynamodb_table.fact_checker_results.name
-      AGENT_ID       = aws_bedrockagent_agent.factcheck_actor.id
-      AGENT_ALIAS_ID = aws_bedrockagent_agent_alias.factcheck_actor.agent_alias_id
+      QUEUE_NAME = aws_sqs_queue.fact_checker_queue.name
+      TABLE_NAME = aws_dynamodb_table.fact_checker_results.name
     }
   }
 }
@@ -164,7 +150,7 @@ resource "aws_lambda_event_source_mapping" "sqs_event_source" {
 }
 
 resource "aws_cloudwatch_log_group" "fact_checker_handler" {
-  name              = "/fact_checker_${var.stage}"
+  name              = "/factchecker_${var.stage}"
   retention_in_days = 30
 }
 

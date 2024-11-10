@@ -1,6 +1,6 @@
 boto3
 urllib3
-boto3-stubs[sts,sqs,dynamodb,bedrock-agent,bedrock-agent-runtime]
+boto3-stubs[sts,sqs,dynamodb,bedrock-runtime]
 aws-lambda-powertools[parser]
 ruff
 pytest

@@ -11,11 +11,11 @@ def test_gateway(snapshot):
     http = urllib3.PoolManager()
 
     # POST /fact-check
-    text = {"prompt": "The text to be fact-checked."}
+    data = {"prompt": "The text to be fact-checked."}
     response = http.request(
         "POST",
         f"{API_ENDPOINT}/fact-check",
-        body=json.dumps(text),
+        body=json.dumps(data),
         headers={"Content-Type": "application/json"},
     )
     assert response.status == 200

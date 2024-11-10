@@ -8,8 +8,6 @@ venv/bin/ruff check
 cd infra/production
 terraform apply -auto-approve
 export API_ENDPOINT=$(terraform output api_endpoint | tr -d '"')
-export AGENT_ID=$(terraform output agent_id | tr -d '"')
-export AGENT_ALIAS_ID=$(terraform output agent_alias_id | tr -d '"')
 cd -
 
 venv/bin/pytest
