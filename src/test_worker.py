@@ -35,7 +35,7 @@ def test_worker():
         # setup
         dummy_state = State(
             id=state_id,
-            status="completed",
+            status="pending",
             output="",
         )
         update_state(dummy_state)
