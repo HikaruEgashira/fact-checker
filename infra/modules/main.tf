@@ -64,9 +64,17 @@ resource "aws_iam_policy" "lambda_policy" {
         ]
         Effect = "Allow"
         Resource = [
-          "arn:aws:bedrock:ap-northeast-1::foundation-model/anthropic.claude-3-haiku-20240307-v1:0",
-          "arn:aws:bedrock:us-west-2:${data.aws_caller_identity.current.account_id}:agent/*",
-          "arn:aws:bedrock:us-west-2:${data.aws_caller_identity.current.account_id}:agent-alias/*"
+          aws_bedrockagent_agent.factcheck_actor.agent_arn,
+        ]
+      },
+      {
+        Action = [
+          "bedrock:InvokeAgent"
+        ]
+        Effect = "Allow"
+        Resource = [
+          # "arn:aws:bedrock:us-west-2:${data.aws_caller_identity.current.account_id}:agent-alias/${aws_bedrockagent_agent_alias.factcheck_actor.agent_alias_id}/${aws_bedrockagent_agent_alias.factcheck_actor.agent_id}"
+          "arn:aws:bedrock:us-west-2:951872725222:agent-alias/5O44DDMAFY/5O44DDMAFY"
         ]
       }
     ]
@@ -113,8 +121,10 @@ resource "aws_lambda_function" "fact_checker_api" {
 
   environment {
     variables = {
-      QUEUE_NAME = aws_sqs_queue.fact_checker_queue.name
-      TABLE_NAME = aws_dynamodb_table.fact_checker_results.name
+      QUEUE_NAME     = aws_sqs_queue.fact_checker_queue.name
+      TABLE_NAME     = aws_dynamodb_table.fact_checker_results.name
+      AGENT_ID       = aws_bedrockagent_agent.factcheck_actor.id
+      AGENT_ALIAS_ID = aws_bedrockagent_agent_alias.factcheck_actor.agent_alias_id
     }
   }
 }
@@ -138,8 +148,10 @@ resource "aws_lambda_function" "fact_checker_worker" {
 
   environment {
     variables = {
-      QUEUE_NAME = aws_sqs_queue.fact_checker_queue.name
-      TABLE_NAME = aws_dynamodb_table.fact_checker_results.name
+      QUEUE_NAME     = aws_sqs_queue.fact_checker_queue.name
+      TABLE_NAME     = aws_dynamodb_table.fact_checker_results.name
+      AGENT_ID       = aws_bedrockagent_agent.factcheck_actor.id
+      AGENT_ALIAS_ID = aws_bedrockagent_agent_alias.factcheck_actor.agent_alias_id
     }
   }
 }

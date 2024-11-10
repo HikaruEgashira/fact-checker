@@ -14,8 +14,8 @@ class FactCheck:
     https://us-west-2.console.aws.amazon.com/bedrock/home?region=us-west-2#/agents/MLEE4EGAPK
     """
 
-    agent_id = os.environ.get("FACT_CHECK_AGENT_ID") or "ML3E4EGAPK"
-    alias_id = os.environ.get("FACT_CHECK_ALIAS_ID") or "T12USSQNST"
+    agent_id = os.environ.get("AGENT_ID") or "ML3E4EGAPK"
+    alias_id = os.environ.get("AGENT_ALIAS_ID") or "PIE16TZAMV"
 
     @classmethod
     def run(
