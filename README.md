@@ -44,11 +44,11 @@ python src/app.py
 
 #### POST /fact-check
 
-- **Description**: Submit a text for fact-checking.
+- **Description**: Submit a prompt for fact-checking.
 - **Request Body**:
   ```json
   {
-    "text": "The text to be fact-checked."
+    "prompt": "The text to be fact-checked."
   }
   ```
 - **Response**:
@@ -75,7 +75,7 @@ python src/app.py
 
 To submit a fact-checking request via the CLI, use the following command:
 ```sh
-python src/app.py submit --text "The text to be fact-checked."
+python src/app.py submit --prompt "The text to be fact-checked."
 ```
 
 ### Check Task Status
