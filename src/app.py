@@ -17,7 +17,7 @@ def main():
     args = parser.parse_args()
     match args.command:
         case "submit":
-            print(enqueue_fact_check_state(args.id, args.text))
+            print(enqueue_fact_check_state(args.id, args.prompt))
             return
         case "state":
             if args.id is None:
