@@ -8,7 +8,7 @@ def main():
     subparsers = parser.add_subparsers(dest="command")
 
     submit_parser = subparsers.add_parser("submit")
-    submit_parser.add_argument("--text", required=True)
+    submit_parser.add_argument("--prompt", required=True)
     submit_parser.add_argument("--id", default=str(uuid.uuid4()))
 
     status_parser = subparsers.add_parser("state")
