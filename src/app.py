@@ -20,9 +20,6 @@ def main():
             print(enqueue_fact_check_state(args.id, args.prompt))
             return
         case "state":
-            if args.id is None:
-                print("Please provide a state id")
-                return
             print(check_state_status(args.id))
             return
         case _:
