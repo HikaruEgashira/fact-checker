@@ -80,7 +80,7 @@ python src/app.py submit --prompt "The text to be fact-checked."
 
 ### Check Task Status
 
-To check the status of a fact-checking task via the CLI, use the following command:
+To check the state of a fact-checking task via the CLI, use the following command:
 ```sh
-python src/app.py status --id "unique-task-id"
+python src/app.py state --id "unique-task-id"
 ```
