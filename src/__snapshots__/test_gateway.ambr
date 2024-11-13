@@ -1,15 +1,7 @@
 # serializer version: 1
 # name: test_gateway[GET /fact-check/{id}]
-  dict({
-    'id': '***',
-    'output': '',
-    'status': 'running',
-  })
+  '{"id":"***","status":"completed","output":"accurate"}'
 # ---
 # name: test_gateway[POST /fact-check]
-  dict({
-    'id': '***',
-    'output': '',
-    'status': 'pending',
-  })
+  '{"id":"***","status":"pending","output":""}'
 # ---

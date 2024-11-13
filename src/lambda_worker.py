@@ -8,7 +8,7 @@ from aws_lambda_powertools.utilities.typing import LambdaContext
 from aws_lambda_powertools import Logger
 
 from schemas.command import Request
-from actions.factcheck import factcheck_action
+from agents.factcheck import factcheck_action
 from schemas.state import get_state, update_state
 
 # Initialize AWS clients
