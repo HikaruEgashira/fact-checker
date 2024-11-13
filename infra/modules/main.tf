@@ -76,6 +76,15 @@ resource "aws_iam_policy" "lambda_policy" {
           "arn:aws:bedrock:*::foundation-model/anthropic.claude-3-5-haiku-20241022-v1:0"
         ]
       },
+      {
+        Action = [
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+        ]
+        Effect   = "Allow"
+        Resource = aws_cloudwatch_log_group.factchecker_loggroup.arn
+      }
     ]
   })
 }
@@ -116,7 +125,7 @@ resource "aws_lambda_function" "fact_checker_api" {
   ]
 
   logging_config {
-    log_group  = aws_cloudwatch_log_group.fact_checker_handler.name
+    log_group  = aws_cloudwatch_log_group.factchecker_loggroup.name
     log_format = "JSON"
   }
 
@@ -143,7 +152,7 @@ resource "aws_lambda_function" "fact_checker_worker" {
   ]
 
   logging_config {
-    log_group  = aws_cloudwatch_log_group.fact_checker_handler.name
+    log_group  = aws_cloudwatch_log_group.factchecker_loggroup.name
     log_format = "JSON"
   }
 
@@ -162,9 +171,10 @@ resource "aws_lambda_event_source_mapping" "sqs_event_source" {
   batch_size       = 10
 }
 
-resource "aws_cloudwatch_log_group" "fact_checker_handler" {
+resource "aws_cloudwatch_log_group" "factchecker_loggroup" {
   name              = "/factchecker_${var.stage}"
   retention_in_days = 30
+  skip_destroy = true
 }
 
 # API Gateway
