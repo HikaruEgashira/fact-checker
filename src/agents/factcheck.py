@@ -23,7 +23,7 @@ def factcheck_action(command: FactcheckCommand):
             {"\n".join(map(lambda x: f"> {x}", response.splitlines()))}
             この返答に対して以下のように反論がありました。
             {opponent_response}
-            この反論を踏まえて再度ファクトチェックを行ってください。
+            この反論を踏まえて再度ファクトチェックを行ってください。100字程度で回答してください。
             最後の行は結果("accurate" | "inaccurate" | "false" | "indeterminate")以外の文字を含めないでください。
             """
 

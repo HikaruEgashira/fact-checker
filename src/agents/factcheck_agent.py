@@ -6,7 +6,7 @@ bedrock = boto3.client("bedrock-runtime", "us-west-2")
 logger = Logger()
 
 agent = """task: 次の文章をファクトチェックし最後の行に結果を返答してください。
-結果を答える前に根拠を説明すること。
+結果を答える前に根拠を説明すること。100字程度で回答してください。
 
 output format: "accurate" | "inaccurate" | "false" | "indeterminate"
 <example1>
