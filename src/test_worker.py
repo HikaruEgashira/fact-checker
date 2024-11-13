@@ -13,13 +13,12 @@ def test_worker():
         {
             "messageId": "test-message-id",
             "receiptHandle": "test-receipt-handle",
-            # '{\"command\":{\"type\":\"entry\",\"prompt\":\"The text to be fact-checked.\"},\"id\":\"unique-request-id\"}'
             "body": json.dumps(
                 {
                     "id": state_id,
                     "command": {
-                        "type": "entry",
-                        "prompt": "The text to be fact-checked.",
+                        "type": "factcheck",
+                        "prompt": "The earth is round.",
                     },
                 }
             ),

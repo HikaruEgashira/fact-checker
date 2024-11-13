@@ -7,7 +7,7 @@ from aws_lambda_powertools.utilities.data_classes import (
 )
 
 from schemas.state import State, update_state, get_state
-from schemas.command import EntryCommand, send_command
+from schemas.command import FactcheckCommand, send_command
 
 logger = Logger()
 
@@ -18,7 +18,7 @@ def enqueue_fact_check_state(state_id: str, prompt: str):
     update_state(state)
 
     # Send the state to the queue
-    command = EntryCommand(prompt=prompt)
+    command = FactcheckCommand(prompt=prompt)
     send_command(command)
 
     return {

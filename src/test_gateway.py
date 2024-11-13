@@ -1,3 +1,4 @@
+from time import sleep
 import urllib3
 import json
 import os
@@ -11,7 +12,7 @@ def test_gateway(snapshot):
     http = urllib3.PoolManager()
 
     # POST /fact-check
-    data = {"prompt": "The text to be fact-checked."}
+    data = {"prompt": "The earth is round."}
     response = http.request(
         "POST",
         f"{API_ENDPOINT}/fact-check",
@@ -31,6 +32,7 @@ def test_gateway(snapshot):
         response = http.request("GET", f"{API_ENDPOINT}/fact-check/{state_id}")
         if json.loads(response.data)["status"] != "pending":
             break
+        sleep(3)
         retry -= 1
     assert response.status == 200
 

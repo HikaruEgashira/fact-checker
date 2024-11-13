@@ -3,7 +3,7 @@
   dict({
     'id': '***',
     'output': '',
-    'status': 'pending',
+    'status': 'running',
   })
 # ---
 # name: test_gateway[POST /fact-check]

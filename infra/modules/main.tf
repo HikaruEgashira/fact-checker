@@ -1,7 +1,16 @@
 data "aws_caller_identity" "current" {}
 
+resource "aws_sqs_queue" "fact_checker_dlq" {
+  name = "${var.queue_name}_dlq"
+}
+
 resource "aws_sqs_queue" "fact_checker_queue" {
   name = var.queue_name
+
+  redrive_policy = jsonencode({
+    deadLetterTargetArn = aws_sqs_queue.fact_checker_dlq.arn
+    maxReceiveCount     = 5
+  })
 }
 
 resource "aws_dynamodb_table" "fact_checker_results" {
@@ -100,6 +109,8 @@ resource "aws_lambda_function" "fact_checker_api" {
   filename         = data.archive_file.deployment_package.output_path
   source_code_hash = filebase64sha256(data.archive_file.deployment_package.output_path)
 
+  timeout = 30
+
   layers = [
     "arn:aws:lambda:${var.aws_region}:017000801446:layer:AWSLambdaPowertoolsPythonV3-python312-x86_64:2"
   ]
@@ -124,6 +135,8 @@ resource "aws_lambda_function" "fact_checker_worker" {
   runtime          = "python3.12"
   filename         = data.archive_file.deployment_package.output_path
   source_code_hash = filebase64sha256(data.archive_file.deployment_package.output_path)
+
+  timeout = 30
 
   layers = [
     "arn:aws:lambda:${var.aws_region}:017000801446:layer:AWSLambdaPowertoolsPythonV3-python312-x86_64:2"

@@ -8,27 +8,35 @@ from aws_lambda_powertools.utilities.typing import LambdaContext
 from aws_lambda_powertools import Logger
 
 from schemas.command import Request
-from actions.entry import entry_action
-from schemas.state import get_state
+from actions.factcheck import factcheck_action
+from schemas.state import get_state, update_state
 
 # Initialize AWS clients
 processor = BatchProcessor(event_type=EventType.SQS)
 logger = Logger()
 
 
+def router(req: Request):
+    match req.command.type:
+        case "factcheck":
+            return factcheck_action(req.command)
+        case _:
+            logger.error(f"Invalid command type: {req.command.type}")
+
+
 def record_handler(record: SQSRecord):
     logger.info(f"Processing record: {record.json_body}")
     req = Request(**record.json_body)
     state = get_state(req.id)
-    if state is None or state.status != "pending":
+    if state is None:
         logger.warning(f"Invalid state: {req.id}")
         return
 
-    match req.command.type:
-        case "entry":
-            entry_action(req.command)
-        case _:
-            raise ValueError(f"Invalid command type: {req.command.type}")
+    state.status = "running"
+    update_state(state)
+    new_state = router(req)
+    if new_state:
+        update_state(new_state)
 
 
 def lambda_handler(event, context: LambdaContext):
@@ -46,7 +54,7 @@ if __name__ == "__main__":
             {
                 "messageId": "test-message-id",
                 "receiptHandle": "test-receipt-handle",
-                "body": "The text to be fact-checked.",
+                "body": "The earth is round.",
                 "attributes": {},
                 "messageAttributes": {},
                 "md5OfBody": "test-md5",

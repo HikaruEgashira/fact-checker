@@ -18,16 +18,18 @@ queue_url = f"https://sqs.{REGION}.amazonaws.com/{sts.get_caller_identity()['Acc
 # https://docs.pydantic.dev/latest/concepts/unions/#discriminated-unions
 
 
-class EntryCommand(BaseModel):
-    type: Literal["entry"] = "entry"
+class FactcheckCommand(BaseModel):
+    type: Literal["factcheck"] = "factcheck"
     prompt: str
 
 
-class UnknownCommand(BaseModel):
-    type: Literal["unknown"] = "unknown"
+class ReviewCommand(BaseModel):
+    type: Literal["review"] = "review"
+    prompt: str
+    id: str
 
 
-Command = Union[EntryCommand, UnknownCommand]
+Command = Union[FactcheckCommand, ReviewCommand]
 
 
 class Request(BaseModel):

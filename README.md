@@ -48,7 +48,7 @@ python src/app.py
 - **Request Body**:
   ```json
   {
-    "prompt": "The text to be fact-checked."
+    "prompt": "The earth is round."
   }
   ```
 - **Response**:
@@ -75,7 +75,7 @@ python src/app.py
 
 To submit a fact-checking request via the CLI, use the following command:
 ```sh
-python src/app.py submit --prompt "The text to be fact-checked."
+python src/app.py submit --prompt "The earth is round."
 ```
 
 ### Check Task Status
