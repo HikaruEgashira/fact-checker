@@ -1,6 +1,9 @@
 import argparse
-from lambda_api import enqueue_fact_check_state, check_state_status
 import uuid
+
+from lambda_api import FactCheckState
+from schemas.command import FactcheckCommand, send_command
+from schemas.state import State, update_state
 
 
 def main():
@@ -17,10 +20,19 @@ def main():
     args = parser.parse_args()
     match args.command:
         case "submit":
-            print(enqueue_fact_check_state(args.id, args.prompt))
+            # Save the state to DynamoDB
+            state = State(id=args.id, status="pending", output="")
+            update_state(state)
+
+            # Send the state to the queue
+            command = FactcheckCommand(prompt=args.prompt)
+            send_command(command)
+
+            print(FactCheckState(id=state.id, status="pending", output=""))
             return
         case "state":
-            print(check_state_status(args.id))
+            state = State(id=args.id, status="pending", output="")
+            print(FactCheckState(id=state.id, status=state.status, output=state.output))
             return
         case _:
             parser.print_help()

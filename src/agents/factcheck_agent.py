@@ -64,14 +64,14 @@ def extract_factcheck_result(
     "indeterminate",
     "out of scope",
 ]:
-    if "accurate" in output:
-        return "accurate"
-    elif "almost accurate" in output:
+    if "almost accurate" in output:
         return "almost accurate"
-    elif "misleading" in output:
-        return "misleading"
     elif "inaccurate" in output:
         return "inaccurate"
+    elif "accurate" in output:
+        return "accurate"
+    elif "misleading" in output:
+        return "misleading"
     elif "unsupported" in output:
         return "unsupported"
     elif "incorrect" in output:
