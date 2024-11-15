@@ -1,4 +1,7 @@
 # serializer version: 1
-# name: test_api
-  '{"id":"unique-request-id","status":"completed","output":"accurate"}'
+# name: test_gateway[GET /fact-check/{id}]
+  '{"id":"***","status":"completed","output":"accurate"}'
+# ---
+# name: test_gateway[POST /fact-check]
+  '{"id":"***","status":"pending","output":""}'
 # ---
