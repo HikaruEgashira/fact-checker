@@ -102,7 +102,7 @@ resource "aws_iam_role_policy_attachment" "lambda_basic_execution" {
 data "archive_file" "deployment_package" {
   type        = "zip"
   source_dir  = "../../src"
-  output_path = "../../package-${var.stage}.zip"
+  output_path = "../../infra/package-${var.stage}.zip"
   excludes = [
     "__snapshots__",
     "__pycache__",
