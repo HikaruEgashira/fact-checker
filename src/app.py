@@ -1,7 +1,6 @@
 import argparse
 import uuid
 
-from lambda_api import FactCheckState
 from schemas.command import FactcheckCommand, send_command
 from schemas.state import State, update_state
 
@@ -28,11 +27,11 @@ def main():
             command = FactcheckCommand(prompt=args.prompt)
             send_command(command)
 
-            print(FactCheckState(id=state.id, status="pending", output=""))
+            print(state)
             return
         case "state":
             state = State(id=args.id, status="pending", output="")
-            print(FactCheckState(id=state.id, status=state.status, output=state.output))
+            print(state)
             return
         case _:
             parser.print_help()

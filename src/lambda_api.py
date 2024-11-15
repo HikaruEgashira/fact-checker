@@ -16,17 +16,9 @@ class FactCheckRequest(BaseModel):
     prompt: str
 
 
-class FactCheckState(BaseModel):
-    id: str
-    status: str
-    output: str
-
-
 @app.post("/fact-check")
 @tracer.capture_method
-def enqueue_fact_check() -> FactCheckState:
-    body = app.current_event.json_body
-    prompt = body["prompt"]
+def enqueue_fact_check(req: FactCheckRequest) -> State:
     state_id = app.current_event.request_context.request_id
 
     # Save the state to DynamoDB
@@ -34,18 +26,18 @@ def enqueue_fact_check() -> FactCheckState:
     update_state(state)
 
     # Send the state to the queue
-    command = FactcheckCommand(prompt=prompt)
+    command = FactcheckCommand(prompt=req.prompt)
     send_command(command)
 
-    return FactCheckState(id=state_id, status="pending", output="")
+    return state
 
 
 @app.get("/fact-check/<state_id>")
 @tracer.capture_method
-def check_state(state_id: str) -> FactCheckState:
+def check_state(state_id: str) -> State:
     state = get_state(state_id)
     if state:
-        return FactCheckState(id=state.id, status=state.status, output=state.output)
+        return state
     else:
         raise Exception("State not found")
 
