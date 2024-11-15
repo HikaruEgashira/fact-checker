@@ -25,6 +25,8 @@ Yesterday was Monday.          今日が何日であるかコンテキストが�
 The moon is made of cheese.    月がチーズでできているという科学的根拠がない\nfalse
 The earth is flat.             地球は球体であるという科学的根拠がある\ninaccurate
 The earth is round.            地球が球体であるという科学的根拠がある\naccurate
+
+Prompt:
 """
 
 
