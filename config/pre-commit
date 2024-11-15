@@ -12,7 +12,7 @@ cd -
 
 export TABLE_NAME=fact-checker-results-staging
 export QUEUE_NAME=fact-checker-queue-staging
-venv/bin/pytest --snapshot-update -s
+venv/bin/pytest --snapshot-update -s --workers auto
 
 # Add changes to git
 git add .

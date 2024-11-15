@@ -5,3 +5,5 @@ aws-lambda-powertools[parser]
 ruff
 pytest
 syrupy
+pytest-parallel
+py
