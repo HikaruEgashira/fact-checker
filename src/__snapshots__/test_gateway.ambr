@@ -1,6 +1,6 @@
 # serializer version: 1
 # name: test_gateway[GET /fact-check/{id}]
-  '{"id":"***","status":"completed","output":"accurate"}'
+  '{"id":"***","status":"completed","output":"indeterminate"}'
 # ---
 # name: test_gateway[POST /fact-check]
   '{"id":"***","status":"pending","output":""}'

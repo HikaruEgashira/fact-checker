@@ -60,7 +60,7 @@ paths:
                     description: Unique state ID
                   result:
                     type: string
-                    enum: [accurate, inaccurate, false, indeterminate]
+                    enum: ["accurate", "almost accurate", "misleading", "inaccurate", "unsupported", "incorrect", "false", "indeterminate", "out of scope"]
                     description: Fact-checking result
       x-amazon-apigateway-integration:
         uri: arn:aws:apigateway:${aws_region_name}:lambda:path/2015-03-31/functions/${lambda_function_arn}/invocations

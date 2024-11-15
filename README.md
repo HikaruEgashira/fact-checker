@@ -65,7 +65,7 @@ python src/app.py
   ```json
   {
     "id": "unique-task-id",
-    "result": "accurate" | "inaccurate" | "false" | "indeterminate"
+    "result": "accurate" | "almost accurate" | "misleading" | "inaccurate" | "unsupported" | "incorrect" | "false" | "indeterminate" | "out of scope"
   }
   ```
 

@@ -23,6 +23,6 @@
   ```json
   {
     "id": "unique-state-id",
-    "result": "accurate" | "inaccurate" | "false" | "indeterminate"
+    "result": "accurate" | "almost accurate" | "misleading" | "inaccurate" | "unsupported" | "incorrect" | "false" | "indeterminate" | "out of scope"
   }
   ```
