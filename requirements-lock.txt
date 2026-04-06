@@ -26,4 +26,4 @@ tblib==3.0.0
 types-awscrt==0.23.0
 types-s3transfer==0.10.3
 typing_extensions==4.12.2
-urllib3==2.5.0
+urllib3==2.6.3
