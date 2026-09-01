@@ -21,7 +21,7 @@ python-dateutil==2.9.0.post0
 ruff==0.16.0
 s3transfer==0.19.2
 six==1.17.0
-syrupy==5.5.3
+syrupy==6.0.0
 tblib==3.2.2
 types-awscrt==0.34.1
 types-s3transfer==0.16.0
