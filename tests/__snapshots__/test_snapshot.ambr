@@ -1,0 +1,4 @@
+# serializer version: 1
+# name: test_amber_serialization
+  '{"id":"***","status":"pending","output":""}'
+# ---
