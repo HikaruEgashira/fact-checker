@@ -1,11 +1,11 @@
-from pydantic import BaseModel
 from aws_lambda_powertools import Logger, Tracer
 from aws_lambda_powertools.event_handler import APIGatewayRestResolver, Response
 from aws_lambda_powertools.logging import correlation_paths
 from aws_lambda_powertools.utilities.typing import LambdaContext
+from pydantic import BaseModel
 
-from schemas.state import State, update_state, get_state
 from schemas.command import FactcheckCommand, send_command
+from schemas.state import State, get_state, update_state
 
 tracer = Tracer()
 logger = Logger()
@@ -14,6 +14,10 @@ app = APIGatewayRestResolver(enable_validation=True)
 
 class FactCheckRequest(BaseModel):
     prompt: str
+
+
+class StateNotFoundError(Exception):
+    pass
 
 
 @app.post("/fact-check")
@@ -39,7 +43,7 @@ def check_state(state_id: str) -> State:
     if state:
         return state
     else:
-        raise Exception("State not found")
+        raise StateNotFoundError("State not found")
 
 
 @app.exception_handler(Exception)

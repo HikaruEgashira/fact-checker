@@ -1,3 +1,4 @@
+from aws_lambda_powertools import Logger
 from aws_lambda_powertools.utilities.batch import (
     BatchProcessor,
     EventType,
@@ -5,10 +6,9 @@ from aws_lambda_powertools.utilities.batch import (
 )
 from aws_lambda_powertools.utilities.data_classes.sqs_event import SQSRecord
 from aws_lambda_powertools.utilities.typing import LambdaContext
-from aws_lambda_powertools import Logger
 
-from schemas.command import Request
 from agents.factcheck import factcheck_action
+from schemas.command import Request
 from schemas.state import get_state, update_state
 
 # Initialize AWS clients

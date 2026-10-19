@@ -1,5 +1,6 @@
 import os
-from typing import Literal, Union
+from typing import Literal
+
 import boto3
 from aws_lambda_powertools.utilities.parser import BaseModel, Field
 
@@ -29,7 +30,7 @@ class ReviewCommand(BaseModel):
     id: str
 
 
-Command = Union[FactcheckCommand, ReviewCommand]
+Command = FactcheckCommand | ReviewCommand
 
 
 class Request(BaseModel):

@@ -1,7 +1,8 @@
-from time import sleep
-import urllib3
 import json
 import os
+from time import sleep
+
+import urllib3
 
 from schemas.state import State
 

@@ -1,9 +1,9 @@
 import os
 from typing import Literal
-import boto3
-from aws_lambda_powertools.utilities.parser import BaseModel
-from aws_lambda_powertools.logging import Logger
 
+import boto3
+from aws_lambda_powertools.logging import Logger
+from aws_lambda_powertools.utilities.parser import BaseModel
 
 TABLE_NAME = os.environ.get("TABLE_NAME") or "fact-checker-results"
 
