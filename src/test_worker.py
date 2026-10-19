@@ -1,8 +1,8 @@
-from lambda_worker import record_handler
-from aws_lambda_powertools.utilities.data_classes.sqs_event import SQSRecord
-import pytest
 import json
 
+from aws_lambda_powertools.utilities.data_classes.sqs_event import SQSRecord
+
+from lambda_worker import record_handler
 from schemas.state import State, update_state
 
 
@@ -30,15 +30,12 @@ def test_worker():
             "awsRegion": "region",
         }
     )
-    try:
-        # setup
-        dummy_state = State(
-            id=state_id,
-            status="pending",
-            output="",
-        )
-        update_state(dummy_state)
+    # setup
+    dummy_state = State(
+        id=state_id,
+        status="pending",
+        output="",
+    )
+    update_state(dummy_state)
 
-        record_handler(event)
-    except Exception as e:
-        pytest.fail(f"record_handler raised an exception: {e}")
+    record_handler(event)

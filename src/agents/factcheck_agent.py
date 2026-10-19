@@ -1,6 +1,7 @@
+from typing import Literal
+
 import boto3
 from aws_lambda_powertools.logging import Logger
-from typing import Literal
 
 bedrock = boto3.client("bedrock-runtime", "us-west-2")
 logger = Logger()

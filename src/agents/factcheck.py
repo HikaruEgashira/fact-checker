@@ -1,8 +1,9 @@
-from agents.factcheck_opponent import reflect_factcheck
-from schemas.state import State, update_state, current_session
-from schemas.command import FactcheckCommand
-from agents.factcheck_agent import extract_factcheck_result, invoke_factcheck_agent
 from aws_lambda_powertools.logging import Logger
+
+from agents.factcheck_agent import extract_factcheck_result, invoke_factcheck_agent
+from agents.factcheck_opponent import reflect_factcheck
+from schemas.command import FactcheckCommand
+from schemas.state import State, current_session, update_state
 
 logger = Logger()
 
@@ -20,7 +21,7 @@ def factcheck_action(command: FactcheckCommand):
         opponent_response = reflect_factcheck(response)
         logger.info(f"Round {rounds} opponent: {opponent_response}")
         reflect = f"""
-            {"\n".join(map(lambda x: f"> {x}", response.splitlines()))}
+            {"\n".join(f"> {x}" for x in response.splitlines())}
             この返答に対して以下のように反論がありました。
             {opponent_response}
             この反論を踏まえて再度ファクトチェックを行ってください。100字程度で回答してください。
